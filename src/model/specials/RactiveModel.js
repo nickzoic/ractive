@@ -16,12 +16,12 @@ export default class RactiveModel extends Model {
 		const model = super.joinKey( key );
 
 		if ( ( key === 'root' || key === 'parent' ) && !model.isLink ) return initLink( model, key );
-		else if ( key === 'data' ) return this.ractive.viewmodel;
+		else if ( key === 'data' ) return this.ractive._viewmodel;
 
 		return model;
 	}
 
-	getKeypath() {
+	_getKeypath() {
 		return '@this';
 	}
 
@@ -33,8 +33,8 @@ export default class RactiveModel extends Model {
 function initLink ( model, key ) {
 	model.applyValue = function ( value ) {
 		this.parent.value[ key ] = value;
-		if ( value && value.viewmodel ) {
-			this.link( value.viewmodel.getRactiveModel(), key );
+		if ( value && value._viewmodel ) {
+			this.link( value._viewmodel.getRactiveModel(), key );
 			this._link.markedAll();
 		} else {
 			this.link( Object.create( Missing ), key );

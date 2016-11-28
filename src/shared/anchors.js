@@ -13,15 +13,15 @@ function findAnchorsIn ( item, name, result ) {
 		}
 	} else if ( item.items ) {
 		item.items.forEach( i => findAnchorsIn( i, name, result ) );
-	} else if ( item.iterations ) {
-		item.iterations.forEach( i => findAnchorsIn( i, name, result ) );
-	} else if ( item.fragment && !item.component ) {
-		findAnchorsIn( item.fragment, name, result );
+	} else if ( item._iterations ) {
+		item._iterations.forEach( i => findAnchorsIn( i, name, result ) );
+	} else if ( item._fragment && !item.component ) {
+		findAnchorsIn( item._fragment, name, result );
 	}
 }
 
 export function updateAnchors ( instance, name = null ) {
-	const anchors = findAnchors( instance.fragment, name );
+	const anchors = findAnchors( instance._fragment, name );
 	const idxs = {};
 	const children = instance._children.byName;
 
@@ -41,7 +41,7 @@ export function updateAnchors ( instance, name = null ) {
 }
 
 export function unrenderChild ( meta ) {
-	if ( meta.instance.fragment.rendered ) {
+	if ( meta.instance._fragment.rendered ) {
 		meta.shouldDestroy = true;
 		meta.instance.unrender();
 	}

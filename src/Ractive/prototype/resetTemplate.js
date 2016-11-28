@@ -26,21 +26,21 @@ export default function Ractive$resetTemplate ( template ) {
 	const promise = runloop.start();
 
 	// remove existing fragment and create new one
-	this.fragment.unbind().unrender( true );
+	this._fragment.unbind().unrender( true );
 
-	this.fragment = new Fragment({
-		template: this.template,
+	this._fragment = new Fragment({
+		_template: this.template,
 		root: this,
 		owner: this
 	});
 
 	const docFrag = createDocumentFragment();
-	this.fragment.bind( this.viewmodel ).render( docFrag );
+	this._fragment.bind( this._viewmodel ).render( docFrag );
 
 	// if this is a component, its el may not be valid, so find a
 	// target based on the component container
 	if ( component && !component.external ) {
-		this.fragment.findParentNode().insertBefore( docFrag, component.findNextNode() );
+		this._fragment.findParentNode().insertBefore( docFrag, component.findNextNode() );
 	} else {
 		this.el.insertBefore( docFrag, this.anchor );
 	}

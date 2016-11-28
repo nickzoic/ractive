@@ -22,7 +22,7 @@ export default function detachChild ( child ) {
 	const promise = runloop.start( child, true );
 
 	if ( meta.anchor ) meta.anchor.removeChild( meta );
-	if ( !child.isolated ) child.viewmodel.detached();
+	if ( !child.isolated ) child._viewmodel.detached();
 
 	runloop.end();
 
@@ -41,10 +41,10 @@ export default function detachChild ( child ) {
 
 	detachHook.fire( child );
 
-	if ( !meta.target && child.fragment.rendered ) {
+	if ( !meta.target && child._fragment.rendered ) {
 		// keep live queries up to date
 		child.findAll( '*' ).forEach( el => {
-			el._ractive.proxy.liveQueries.forEach( q => {
+			el._ractive.proxy.__liveQueries.forEach( q => {
 				// remove from non-self queries
 				if ( isParent( this, q.ractive ) ) el._ractive.proxy.removeFromQuery( q );
 			});
@@ -52,12 +52,12 @@ export default function detachChild ( child ) {
 
 		// keep live component queries up to date
 		child.findAllComponents().forEach( cmp => {
-			cmp.component.liveQueries.forEach( q => {
+			cmp.component.__liveQueries.forEach( q => {
 				if ( isParent( this, q.ractive ) ) cmp.component.removeFromQuery( q );
 			});
 		});
 
-		meta.liveQueries.forEach( q => meta.removeFromQuery( q ) );
+		meta.__liveQueries.forEach( q => meta.removeFromQuery( q ) );
 	}
 
 	promise.ractive = child;

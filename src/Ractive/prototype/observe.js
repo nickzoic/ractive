@@ -54,24 +54,24 @@ function createObserver ( ractive, keypath, callback, options ) {
 	const keys = splitKeypath( keypath );
 	let wildcardIndex = keys.indexOf( '*' );
 	options.keypath = keypath;
-	options.fragment = options.fragment || ractive.fragment;
+	options._fragment = options._fragment || ractive._fragment;
 
 	let model;
-	if ( !options.fragment ) {
-		model = ractive.viewmodel.joinKey( keys[0] );
+	if ( !options._fragment ) {
+		model = ractive._viewmodel.joinKey( keys[0] );
 	} else {
 		// .*.whatever relative wildcard is a special case because splitkeypath doesn't handle the leading .
 		if ( keys[0] === '.*' ) {
-			model = options.fragment.findContext();
+			model = options._fragment.findContext();
 			wildcardIndex = 0;
 			keys[0] = '*';
 		} else {
-			model = wildcardIndex === 0 ? options.fragment.findContext() : resolveReference( options.fragment, keys[0] );
+			model = wildcardIndex === 0 ? options._fragment.findContext() : resolveReference( options._fragment, keys[0] );
 		}
 	}
 
 	// the model may not exist key
-	if ( !model ) model = ractive.viewmodel.joinKey( keys[0] );
+	if ( !model ) model = ractive._viewmodel.joinKey( keys[0] );
 
 	if ( !~wildcardIndex ) {
 		model = model.joinAll( keys.slice( 1 ) );
@@ -122,7 +122,7 @@ class Observer {
 		}
 	}
 
-	handleChange () {
+	_handleChange () {
 		if ( !this.dirty ) {
 			const newValue = this.model.get();
 			if ( isEqual( newValue, this.oldValue ) ) return;
@@ -149,7 +149,7 @@ class Observer {
 
 	resolved ( model ) {
 		this.model = model;
-		this.keypath = model.getKeypath( this.ractive );
+		this.keypath = model._getKeypath( this.ractive );
 
 		this.oldValue = undefined;
 		this.newValue = model.get();
@@ -167,7 +167,7 @@ class PatternObserver {
 		this.callback = callback;
 
 		const pattern = keys.join( '\\.' ).replace( /\*/g, '(.+)' );
-		const baseKeypath = baseModel.getKeypath( ractive );
+		const baseKeypath = baseModel._getKeypath( ractive );
 		this.pattern = new RegExp( `^${baseKeypath ? baseKeypath + '\\.' : ''}${pattern}$` );
 
 		this.oldValues = {};
@@ -184,7 +184,7 @@ class PatternObserver {
 		const models = baseModel.findMatches( this.keys );
 
 		models.forEach( model => {
-			this.newValues[ model.getKeypath( this.ractive ) ] = model.get();
+			this.newValues[ model._getKeypath( this.ractive ) ] = model.get();
 		});
 
 		if ( options.init !== false ) {
@@ -241,7 +241,7 @@ class PatternObserver {
 	shuffle ( newIndices ) {
 		if ( !isArray( this.baseModel.value ) ) return;
 
-		const base = this.baseModel.getKeypath( this.ractive );
+		const base = this.baseModel._getKeypath( this.ractive );
 		const max = this.baseModel.value.length;
 		const suffix = this.keys.length > 1 ? '.' + this.keys.slice( 1 ).join( '.' ) : '';
 
@@ -256,7 +256,7 @@ class PatternObserver {
 		}
 	}
 
-	handleChange () {
+	_handleChange () {
 		if ( !this.dirty || this.changed.length ) {
 			if ( !this.dirty ) this.newValues = {};
 
@@ -270,7 +270,7 @@ class PatternObserver {
 
 			if ( !this.changed.length ) {
 				this.baseModel.findMatches( this.keys ).forEach( model => {
-					const keypath = model.getKeypath( this.ractive );
+					const keypath = model._getKeypath( this.ractive );
 					this.newValues[ keypath ] = model.get();
 				});
 				this.partial = false;
@@ -278,10 +278,10 @@ class PatternObserver {
 				let count = 0;
 				const ok = this.baseModel.isRoot ?
 					this.changed.map( keys => keys.map( escapeKey ).join( '.' ) ) :
-					this.changed.map( keys => this.baseModel.getKeypath( this.ractive ) + '.' + keys.map( escapeKey ).join( '.' ) );
+					this.changed.map( keys => this.baseModel._getKeypath( this.ractive ) + '.' + keys.map( escapeKey ).join( '.' ) );
 
 				this.baseModel.findMatches( this.keys ).forEach( model => {
-					const keypath = model.getKeypath( this.ractive );
+					const keypath = model._getKeypath( this.ractive );
 					// is this model on a changed keypath?
 					if ( ok.filter( k => keypath.indexOf( k ) === 0 || k.indexOf( keypath ) === 0 ).length ) {
 						count++;

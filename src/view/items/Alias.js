@@ -16,38 +16,38 @@ export default class Alias extends ContainerItem {
 	constructor ( options ) {
 		super( options );
 
-		this.fragment = null;
+		this._fragment = null;
 	}
 
 	bind () {
-		this.fragment = new Fragment({
+		this._fragment = new Fragment({
 			owner: this,
-			template: this.template.f
+			_template: this._template.f
 		});
 
-		this.fragment.aliases = resolveAliases( this.template.z, this.parentFragment );
-		this.fragment.bind();
+		this._fragment.aliases = resolveAliases( this._template.z, this._parentFragment );
+		this._fragment.bind();
 	}
 
 	render ( target ) {
 		this.rendered = true;
-		if ( this.fragment ) this.fragment.render( target );
+		if ( this._fragment ) this._fragment.render( target );
 	}
 
 	unbind () {
-		this.fragment.aliases = {};
-		if ( this.fragment ) this.fragment.unbind();
+		this._fragment.aliases = {};
+		if ( this._fragment ) this._fragment.unbind();
 	}
 
 	unrender ( shouldDestroy ) {
-		if ( this.rendered && this.fragment ) this.fragment.unrender( shouldDestroy );
+		if ( this.rendered && this._fragment ) this._fragment.unrender( shouldDestroy );
 		this.rendered = false;
 	}
 
 	update () {
 		if ( this.dirty ) {
 			this.dirty = false;
-			this.fragment.update();
+			this._fragment.update();
 		}
 	}
 }

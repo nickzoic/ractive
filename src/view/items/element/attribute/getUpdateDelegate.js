@@ -8,7 +8,7 @@ import { readStyle, readClass } from '../../../helpers/specialAttrs';
 const textTypes = [ undefined, 'text', 'search', 'url', 'email', 'hidden', 'password', 'search', 'reset', 'submit' ];
 
 export default function getUpdateDelegate ( attribute ) {
-	const { element, name } = attribute;
+	const { _element: element, name } = attribute;
 
 	if ( name === 'id' ) return updateId;
 
@@ -155,14 +155,14 @@ function updateRadioValue ( reset ) {
 
 	//node.value = this.element.getAttribute( 'value' );
 	node.value = this.node._ractive.value = value;
-	node.checked = value === this.element.getAttribute( 'name' );
+	node.checked = value === this._element.getAttribute( 'name' );
 
 	// This is a special case - if the input was checked, and the value
 	// changed so that it's no longer checked, the twoway binding is
 	// most likely out of date. To fix it we have to jump through some
 	// hoops... this is a little kludgy but it works
-	if ( wasChecked && !node.checked && this.element.binding && this.element.binding.rendered ) {
-		this.element.binding.group.model.set( this.element.binding.group.getValue() );
+	if ( wasChecked && !node.checked && this._element.binding && this._element.binding.rendered ) {
+		this._element.binding.group.model.set( this._element.binding.group.getValue() );
 	}
 }
 
@@ -202,7 +202,7 @@ function updateRadioName ( reset ) {
 }
 
 function updateCheckboxName ( reset ) {
-	const { element, node } = this;
+	const { _element: element, node } = this;
 	const binding = element.binding;
 
 	const value = this.getValue();

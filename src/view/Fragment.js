@@ -16,11 +16,11 @@ export default class Fragment {
 	constructor ( options ) {
 		this.owner = options.owner; // The item that owns this fragment - an element, section, partial, or attribute
 
-		this.isRoot = !options.owner.parentFragment;
-		this.parent = this.isRoot ? null : this.owner.parentFragment;
+		this.isRoot = !options.owner._parentFragment;
+		this.parent = this.isRoot ? null : this.owner._parentFragment;
 		this.ractive = options.ractive || ( this.isRoot ? options.owner : this.parent.ractive );
 
-		this.componentParent = ( this.isRoot && this.ractive.component ) ? this.ractive.component.parentFragment : null;
+		this.componentParent = ( this.isRoot && this.ractive.component ) ? this.ractive.component._parentFragment : null;
 
 		this.context = null;
 		this.rendered = false;
@@ -33,7 +33,7 @@ export default class Fragment {
 		this.dirty = false;
 		this.dirtyValue = true; // used for attribute values
 
-		this.template = options.template || [];
+		this._template = options._template || [];
 		this.createItems();
 	}
 
@@ -70,10 +70,10 @@ export default class Fragment {
 
 	createItems () {
 		// this is a hot code path
-		const max = this.template.length;
+		const max = this._template.length;
 		this.items = [];
 		for ( let i = 0; i < max; i++ ) {
-			this.items[i] = createItem({ parentFragment: this, template: this.template[i], index: i });
+			this.items[i] = createItem({ _parentFragment: this, _template: this._template[i], index: i });
 		}
 	}
 
@@ -110,7 +110,7 @@ export default class Fragment {
 	findContext () {
 		let fragment = this;
 		while ( fragment && !fragment.context ) fragment = fragment.parent;
-		if ( !fragment ) return this.ractive.viewmodel;
+		if ( !fragment ) return this.ractive._viewmodel;
 		else return fragment.context;
 	}
 
@@ -129,7 +129,7 @@ export default class Fragment {
 		// it means we're at the end...
 		if ( this.isRoot ) {
 			if ( this.ractive.component ) {
-				return this.ractive.component.parentFragment.findNextNode( this.ractive.component );
+				return this.ractive.component._parentFragment.findNextNode( this.ractive.component );
 			}
 
 			// TODO possible edge case with other content
@@ -202,7 +202,7 @@ export default class Fragment {
 			this.unbind();
 		}
 
-		this.template = template;
+		this._template = template;
 		this.createItems();
 
 		if ( wasBound ) {

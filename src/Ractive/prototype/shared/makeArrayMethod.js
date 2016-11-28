@@ -7,7 +7,7 @@ const arrayProto = Array.prototype;
 
 export default function ( methodName ) {
 	function path ( keypath, ...args ) {
-		return model( this.viewmodel.joinAll( splitKeypath( keypath ) ), args );
+		return model( this._viewmodel.joinAll( splitKeypath( keypath ) ), args );
 	}
 
 	function model ( mdl, args ) {
@@ -22,7 +22,7 @@ export default function ( methodName ) {
 				runloop.end();
 				return promise;
 			} else {
-				throw new Error( `shuffle array method ${methodName} called on non-array at ${mdl.getKeypath()}` );
+				throw new Error( `shuffle array method ${methodName} called on non-array at ${mdl._getKeypath()}` );
 			}
 		}
 

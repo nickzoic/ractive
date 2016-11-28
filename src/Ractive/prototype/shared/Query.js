@@ -45,8 +45,8 @@ function sortByItemPosition ( a, b ) {
 	oldestA = oldestA.component || oldestA;
 	oldestB = oldestB.component || oldestB;
 
-	const fragmentA = oldestA.parentFragment;
-	const fragmentB = oldestB.parentFragment;
+	const fragmentA = oldestA._parentFragment;
+	const fragmentB = oldestB._parentFragment;
 
 	// if both items share a parent fragment, our job is easy
 	if ( fragmentA === fragmentB ) {
@@ -60,7 +60,7 @@ function sortByItemPosition ( a, b ) {
 
 	// if mutual ancestor is a section, we first test to see which section
 	// fragment comes first
-	const fragments = mutualAncestor.iterations;
+	const fragments = mutualAncestor._iterations;
 	if ( fragments ) {
 		const indexA = fragments.indexOf( fragmentA );
 		const indexB = fragments.indexOf( fragmentB );
@@ -72,11 +72,11 @@ function sortByItemPosition ( a, b ) {
 }
 
 function getParent ( item ) {
-	let parentFragment = item.parentFragment;
+	let parentFragment = item._parentFragment;
 
 	if ( parentFragment ) return parentFragment.owner;
 
-	if ( item.component && ( parentFragment = item.component.parentFragment ) ) {
+	if ( item.component && ( parentFragment = item.component._parentFragment ) ) {
 		return parentFragment.owner;
 	}
 }

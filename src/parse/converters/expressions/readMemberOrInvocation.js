@@ -19,13 +19,13 @@ export default function ( parser ) {
 			};
 		}
 
-		else if ( parser.matchString( '(' ) ) {
-			parser.allowWhitespace();
+		else if ( parser._matchString( '(' ) ) {
+			parser._allowWhitespace();
 			const expressionList = readExpressionList( parser, true );
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 
-			if ( !parser.matchString( ')' ) ) {
+			if ( !parser._matchString( ')' ) ) {
 				parser.error( expectedParen );
 			}
 

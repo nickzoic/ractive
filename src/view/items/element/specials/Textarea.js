@@ -7,22 +7,22 @@ import Fragment from '../../../Fragment';
 
 export default class Textarea extends Input {
 	constructor( options ) {
-		const template = options.template;
+		const template = options._template;
 
 		options.deferContent = true;
 
 		super( options );
 
 		// check for single interpolator binding
-		if ( !this.attributeByName.value ) {
-			if ( template.f && isBindable( { template } ) ) {
+		if ( !this._attributeByName.value ) {
+			if ( template.f && isBindable( { _template: template } ) ) {
 				this.attributes.push( createItem( {
 					owner: this,
-					template: { t: ATTRIBUTE, f: template.f, n: 'value' },
-					parentFragment: this.parentFragment
+					_template: { t: ATTRIBUTE, f: template.f, n: 'value' },
+					_parentFragment: this._parentFragment
 				} ) );
 			} else {
-				this.fragment = new Fragment({ owner: this, cssIds: null, template: template.f });
+				this._fragment = new Fragment({ owner: this, cssIds: null, _template: template.f });
 			}
 		}
 	}
@@ -31,14 +31,14 @@ export default class Textarea extends Input {
 		if ( !this.dirty ) {
 			this.dirty = true;
 
-			if ( this.rendered && !this.binding && this.fragment ) {
+			if ( this.rendered && !this.binding && this._fragment ) {
 				runloop.scheduleTask( () => {
 					this.dirty = false;
-					this.node.value = this.fragment.toString();
+					this.node.value = this._fragment.toString();
 				});
 			}
 
-			this.parentFragment.bubble(); // default behaviour
+			this._parentFragment.bubble(); // default behaviour
 		}
 	}
 }

@@ -12,27 +12,27 @@ export default function getConditional ( parser ) {
 
 	const start = parser.pos;
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '?' ) ) {
+	if ( !parser._matchString( '?' ) ) {
 		parser.pos = start;
 		return expression;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const ifTrue = readExpression( parser );
 	if ( !ifTrue ) {
 		parser.error( expectedExpression );
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( ':' ) ) {
+	if ( !parser._matchString( ':' ) ) {
 		parser.error( 'Expected ":"' );
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const ifFalse = readExpression( parser );
 	if ( !ifFalse ) {

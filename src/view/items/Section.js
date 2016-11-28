@@ -22,17 +22,17 @@ export default class Section extends MustacheContainer {
 	constructor ( options ) {
 		super( options );
 
-		this.sectionType = options.template.n || null;
+		this.sectionType = options._template.n || null;
 		this.templateSectionType = this.sectionType;
-		this.subordinate = options.template.l === 1;
-		this.fragment = null;
+		this.subordinate = options._template.l === 1;
+		this._fragment = null;
 	}
 
 	bind () {
 		super.bind();
 
 		if ( this.subordinate ) {
-			this.sibling = this.parentFragment.items[ this.parentFragment.items.indexOf( this ) - 1 ];
+			this.sibling = this._parentFragment.items[ this._parentFragment.items.indexOf( this ) - 1 ];
 			this.sibling.nextSibling = this;
 		}
 
@@ -41,9 +41,9 @@ export default class Section extends MustacheContainer {
 			this.dirty = true;
 			this.update();
 		} else if ( this.sectionType && this.sectionType === SECTION_UNLESS && ( !this.sibling || !this.sibling.isTruthy() ) ) {
-			this.fragment = new Fragment({
+			this._fragment = new Fragment({
 				owner: this,
-				template: this.template.f
+				_template: this._template.f
 			}).bind();
 		}
 	}
@@ -56,38 +56,38 @@ export default class Section extends MustacheContainer {
 
 	rebind ( next, previous, safe ) {
 		if ( super.rebind( next, previous, safe ) ) {
-			if ( this.fragment && this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ) {
-				this.fragment.rebinding( next );
+			if ( this._fragment && this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ) {
+				this._fragment.rebinding( next );
 			}
 		}
 	}
 
 	render ( target, occupants ) {
 		this.rendered = true;
-		if ( this.fragment ) this.fragment.render( target, occupants );
+		if ( this._fragment ) this._fragment.render( target, occupants );
 	}
 
 	shuffle ( newIndices ) {
-		if ( this.fragment && this.sectionType === SECTION_EACH ) {
-			this.fragment.shuffle( newIndices );
+		if ( this._fragment && this.sectionType === SECTION_EACH ) {
+			this._fragment.shuffle( newIndices );
 		}
 	}
 
 	unbind () {
 		super.unbind();
-		if ( this.fragment ) this.fragment.unbind();
+		if ( this._fragment ) this._fragment.unbind();
 	}
 
 	unrender ( shouldDestroy ) {
-		if ( this.rendered && this.fragment ) this.fragment.unrender( shouldDestroy );
+		if ( this.rendered && this._fragment ) this._fragment.unrender( shouldDestroy );
 		this.rendered = false;
 	}
 
 	update () {
 		if ( !this.dirty ) return;
 
-		if ( this.fragment && this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ) {
-			this.fragment.context = this.model;
+		if ( this._fragment && this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ) {
+			this._fragment.context = this.model;
 		}
 
 		if ( !this.model && this.sectionType !== SECTION_UNLESS ) return;
@@ -99,13 +99,13 @@ export default class Section extends MustacheContainer {
 		const lastType = this.sectionType;
 
 		// watch for switching section types
-		if ( this.sectionType === null || this.templateSectionType === null ) this.sectionType = getType( value, this.template.i );
-		if ( lastType && lastType !== this.sectionType && this.fragment ) {
+		if ( this.sectionType === null || this.templateSectionType === null ) this.sectionType = getType( value, this._template.i );
+		if ( lastType && lastType !== this.sectionType && this._fragment ) {
 			if ( this.rendered ) {
-				this.fragment.unbind().unrender( true );
+				this._fragment.unbind().unrender( true );
 			}
 
-			this.fragment = null;
+			this._fragment = null;
 		}
 
 		let newFragment;
@@ -115,36 +115,36 @@ export default class Section extends MustacheContainer {
 		                            ( siblingFalsey && ( this.sectionType === SECTION_UNLESS ? !this.isTruthy() : this.isTruthy() ) ); // if, unless, and if-with depend on siblings and the condition
 
 		if ( fragmentShouldExist ) {
-			if ( this.fragment ) {
-				this.fragment.update();
+			if ( this._fragment ) {
+				this._fragment.update();
 			} else {
 				if ( this.sectionType === SECTION_EACH ) {
 					newFragment = new RepeatedFragment({
 						owner: this,
-						template: this.template.f,
-						indexRef: this.template.i
+						_template: this._template.f,
+						indexRef: this._template.i
 					}).bind( this.model );
 				} else {
 					// only with and if-with provide context - if and unless do not
 					const context = this.sectionType !== SECTION_IF && this.sectionType !== SECTION_UNLESS ? this.model : null;
 					newFragment = new Fragment({
 						owner: this,
-						template: this.template.f
+						_template: this._template.f
 					}).bind( context );
 				}
 			}
 		} else {
-			if ( this.fragment && this.rendered ) {
-				this.fragment.unbind().unrender( true );
+			if ( this._fragment && this.rendered ) {
+				this._fragment.unbind().unrender( true );
 			}
 
-			this.fragment = null;
+			this._fragment = null;
 		}
 
 		if ( newFragment ) {
 			if ( this.rendered ) {
-				const parentNode = this.parentFragment.findParentNode();
-				const anchor = this.parentFragment.findNextNode( this );
+				const parentNode = this._parentFragment.findParentNode();
+				const anchor = this._parentFragment.findNextNode( this );
 
 				if ( anchor ) {
 					const docFrag = createDocumentFragment();
@@ -158,7 +158,7 @@ export default class Section extends MustacheContainer {
 				}
 			}
 
-			this.fragment = newFragment;
+			this._fragment = newFragment;
 		}
 
 		if ( this.nextSibling ) {

@@ -2,7 +2,7 @@ import defaults from './Ractive/config/defaults';
 import easing from './Ractive/static/easing';
 import interpolators from './Ractive/static/interpolators';
 import { magic, svg, win } from './config/environment';
-import { defineProperties, extend as extendObj } from './utils/object';
+import { defineProperty, defineProperties, extend as extendObj } from './utils/object';
 import proto from './Ractive/prototype';
 import Promise from './utils/Promise';
 import extend from './extend/_extend';
@@ -56,6 +56,8 @@ if ( win && !win.Ractive ) {
 
 extendObj( Ractive.prototype, proto, defaults );
 Ractive.prototype.constructor = Ractive;
+
+defineProperty( Ractive.prototype, 'viewmodel', { get () { return this._viewmodel; } } );
 
 // alias prototype as `defaults`
 Ractive.defaults = Ractive.prototype;

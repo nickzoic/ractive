@@ -12,7 +12,7 @@ export const Missing = {
 	animate: noop,
 	applyValue: noop,
 	get: noop,
-	getKeypath () { return this.key; },
+	_getKeypath () { return this.key; },
 	joinAll () { return this; },
 	joinKey () { return this; },
 	mark: noop,
@@ -75,10 +75,10 @@ export default class LinkModel extends ModelBase {
 		return maybeBind( this, this.target.get( false, opts ), bind );
 	}
 
-	getKeypath ( ractive ) {
-		if ( ractive && ractive !== this.root.ractive ) return this.target.getKeypath( ractive );
+	_getKeypath ( ractive ) {
+		if ( ractive && ractive !== this.root.ractive ) return this.target._getKeypath( ractive );
 
-		return super.getKeypath( ractive );
+		return super._getKeypath( ractive );
 	}
 
 	getKeypathModel ( ractive ) {
@@ -87,7 +87,7 @@ export default class LinkModel extends ModelBase {
 		return this.keypathModel;
 	}
 
-	handleChange () {
+	_handleChange () {
 		this.deps.forEach( handleChange );
 		this.links.forEach( handleChange );
 		this.notifyUpstream();
@@ -99,13 +99,13 @@ export default class LinkModel extends ModelBase {
 		// TODO: handle nested links
 		if ( key === undefined || key === '' ) return this;
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !this._childByKey.hasOwnProperty( key ) ) {
 			const child = new LinkModel( this, this, this.target.joinKey( key ), key );
 			this.children.push( child );
-			this.childByKey[ key ] = child;
+			this._childByKey[ key ] = child;
 		}
 
-		return this.childByKey[ key ];
+		return this._childByKey[ key ];
 	}
 
 	mark () {

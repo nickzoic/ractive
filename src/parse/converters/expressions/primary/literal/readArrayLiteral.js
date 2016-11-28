@@ -5,16 +5,16 @@ export default function ( parser ) {
 	const start = parser.pos;
 
 	// allow whitespace before '['
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '[' ) ) {
+	if ( !parser._matchString( '[' ) ) {
 		parser.pos = start;
 		return null;
 	}
 
 	const expressionList = readExpressionList( parser, true );
 
-	if ( !parser.matchString( ']' ) ) {
+	if ( !parser._matchString( ']' ) ) {
 		parser.pos = start;
 		return null;
 	}

@@ -14,22 +14,22 @@ const missingDecorator = {
 
 export default class Decorator {
 	constructor ( options ) {
-		this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-		this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
-		this.parentFragment = this.owner.parentFragment;
+		this.owner = options.owner || options._parentFragment.owner || findElement( options._parentFragment );
+		this._element = this.owner._attributeByName ? this.owner : findElement( options._parentFragment );
+		this._parentFragment = this.owner._parentFragment;
 		this.ractive = this.owner.ractive;
-		const template = this.template = options.template;
+		const template = this._template = options._template;
 
 		this.name = template.n;
 
 		this.node = null;
 		this.intermediary = null;
 
-		this.element.decorators.push( this );
+		this._element.decorators.push( this );
 	}
 
 	bind () {
-		setupArgsFn( this, this.template, this.parentFragment );
+		setupArgsFn( this, this._template, this._parentFragment );
 	}
 
 	bubble () {
@@ -44,13 +44,13 @@ export default class Decorator {
 		this.shouldDestroy = true;
 	}
 
-	handleChange () { this.bubble(); }
+	_handleChange () { this.bubble(); }
 
 	rebind ( next, previous, safe ) {
 		const idx = this.models.indexOf( previous );
 		if ( !~idx ) return;
 
-		next = rebindMatch( this.template.f.r[ idx ], next, previous );
+		next = rebindMatch( this._template.f.r[ idx ], next, previous );
 		if ( next === previous ) return;
 
 		previous.unregister( this );
@@ -70,7 +70,7 @@ export default class Decorator {
 				return;
 			}
 
-			this.node = this.element.node;
+			this.node = this._element.node;
 
 			let args;
 			if ( this.fn ) {
@@ -97,11 +97,11 @@ export default class Decorator {
 	toString () { return ''; }
 
 	unbind () {
-		teardownArgsFn( this, this.template );
+		teardownArgsFn( this, this._template );
 	}
 
 	unrender ( shouldDestroy ) {
-		if ( ( !shouldDestroy || this.element.rendered ) && this.intermediary ) this.intermediary.teardown();
+		if ( ( !shouldDestroy || this._element.rendered ) && this.intermediary ) this.intermediary.teardown();
 		this.rendered = false;
 	}
 

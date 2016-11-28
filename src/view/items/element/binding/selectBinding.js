@@ -13,14 +13,14 @@ import SingleSelectBinding from './SingleSelectBinding';
 
 export function isBindable ( attribute ) {
 	return attribute &&
-		   attribute.template.f &&
-	       attribute.template.f.length === 1 &&
-	       attribute.template.f[0].t === INTERPOLATOR &&
-	       !attribute.template.f[0].s;
+		   attribute._template.f &&
+	       attribute._template.f.length === 1 &&
+	       attribute._template.f[0].t === INTERPOLATOR &&
+	       !attribute._template.f[0].s;
 }
 
 export default function selectBinding ( element ) {
-	const attributes = element.attributeByName;
+	const attributes = element._attributeByName;
 
 	// contenteditable - bind if the contenteditable attribute is true
 	// or is bindable and may thus become true...

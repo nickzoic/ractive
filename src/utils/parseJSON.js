@@ -24,7 +24,7 @@ const onlyWhitespace = /^\s*$/;
 const JsonParser = Parser.extend({
 	init ( str, options ) {
 		this.values = options.values;
-		this.allowWhitespace();
+		this._allowWhitespace();
 	},
 
 	postProcess ( result ) {
@@ -39,7 +39,7 @@ const JsonParser = Parser.extend({
 		function getPlaceholder ( parser ) {
 			if ( !parser.values ) return null;
 
-			const placeholder = parser.matchPattern( placeholderAtStartPattern );
+			const placeholder = parser._matchPattern( placeholderAtStartPattern );
 
 			if ( placeholder && ( parser.values.hasOwnProperty( placeholder ) ) ) {
 				return { v: parser.values[ placeholder ] };
@@ -47,12 +47,12 @@ const JsonParser = Parser.extend({
 		},
 
 		function getSpecial ( parser ) {
-			const special = parser.matchPattern( specialsPattern );
+			const special = parser._matchPattern( specialsPattern );
 			if ( special ) return { v: specials[ special ] };
 		},
 
 		function getNumber ( parser ) {
-			const number = parser.matchPattern( numberPattern );
+			const number = parser._matchPattern( numberPattern );
 			if ( number ) return { v: +number };
 		},
 
@@ -70,13 +70,13 @@ const JsonParser = Parser.extend({
 		},
 
 		function getObject ( parser ) {
-			if ( !parser.matchString( '{' ) ) return null;
+			if ( !parser._matchString( '{' ) ) return null;
 
 			const result = {};
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 
-			if ( parser.matchString( '}' ) ) {
+			if ( parser._matchString( '}' ) ) {
 				return { v: result };
 			}
 
@@ -84,13 +84,13 @@ const JsonParser = Parser.extend({
 			while ( pair = getKeyValuePair( parser ) ) {
 				result[ pair.key ] = pair.value;
 
-				parser.allowWhitespace();
+				parser._allowWhitespace();
 
-				if ( parser.matchString( '}' ) ) {
+				if ( parser._matchString( '}' ) ) {
 					return { v: result };
 				}
 
-				if ( !parser.matchString( ',' ) ) {
+				if ( !parser._matchString( ',' ) ) {
 					return null;
 				}
 			}
@@ -99,13 +99,13 @@ const JsonParser = Parser.extend({
 		},
 
 		function getArray ( parser ) {
-			if ( !parser.matchString( '[' ) ) return null;
+			if ( !parser._matchString( '[' ) ) return null;
 
 			const result = [];
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 
-			if ( parser.matchString( ']' ) ) {
+			if ( parser._matchString( ']' ) ) {
 				return { v: result };
 			}
 
@@ -113,17 +113,17 @@ const JsonParser = Parser.extend({
 			while ( valueToken = parser.read() ) {
 				result.push( valueToken.v );
 
-				parser.allowWhitespace();
+				parser._allowWhitespace();
 
-				if ( parser.matchString( ']' ) ) {
+				if ( parser._matchString( ']' ) ) {
 					return { v: result };
 				}
 
-				if ( !parser.matchString( ',' ) ) {
+				if ( !parser._matchString( ',' ) ) {
 					return null;
 				}
 
-				parser.allowWhitespace();
+				parser._allowWhitespace();
 			}
 
 			return null;
@@ -132,7 +132,7 @@ const JsonParser = Parser.extend({
 });
 
 function getKeyValuePair ( parser ) {
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const key = readKey( parser );
 
@@ -140,11 +140,11 @@ function getKeyValuePair ( parser ) {
 
 	const pair = { key };
 
-	parser.allowWhitespace();
-	if ( !parser.matchString( ':' ) ) {
+	parser._allowWhitespace();
+	if ( !parser._matchString( ':' ) ) {
 		return null;
 	}
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const valueToken = parser.read();
 

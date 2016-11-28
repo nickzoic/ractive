@@ -3,11 +3,11 @@ import handleDomEvent from './handleDomEvent';
 
 export default class ContentEditableBinding extends Binding {
 	getInitialValue () {
-		return this.element.fragment ? this.element.fragment.toString() : '';
+		return this._element._fragment ? this._element._fragment.toString() : '';
 	}
 
 	getValue () {
-		return this.element.node.innerHTML;
+		return this._element.node.innerHTML;
 	}
 
 	render () {

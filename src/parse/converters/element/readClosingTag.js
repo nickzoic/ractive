@@ -8,11 +8,11 @@ export default function readClosingTag ( parser ) {
 	const start = parser.pos;
 
 	// are we looking at a closing tag?
-	if ( !parser.matchString( '</' ) ) {
+	if ( !parser._matchString( '</' ) ) {
 		return null;
 	}
 
-	if ( tag = parser.matchPattern( closingTagPattern ) ) {
+	if ( tag = parser._matchPattern( closingTagPattern ) ) {
 		if ( parser.inside && tag !== parser.inside ) {
 			parser.pos = start;
 			return null;

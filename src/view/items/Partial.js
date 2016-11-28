@@ -12,31 +12,31 @@ export default class Partial extends MustacheContainer {
 	constructor ( options ) {
 		super( options );
 
-		this.yielder = options.template.t === YIELDER;
+		this.yielder = options._template.t === YIELDER;
 
 		if ( this.yielder ) {
-			this.container = options.parentFragment.ractive;
+			this.container = options._parentFragment.ractive;
 			this.component = this.container.component;
 
-			this.containerFragment = options.parentFragment;
-			this.parentFragment = this.component.parentFragment;
+			this.containerFragment = options._parentFragment;
+			this._parentFragment = this.component._parentFragment;
 
 			// {{yield}} is equivalent to {{yield content}}
-			if ( !options.template.r && !options.template.rx && !options.template.x ) options.template.r = 'content';
+			if ( !options._template.r && !options._template.rx && !options._template.x ) options._template.r = 'content';
 		}
 	}
 
 	bind () {
 		// keep track of the reference name for future resets
-		this.refName = this.template.r;
+		this.refName = this._template.r;
 
 		// name matches take priority over expressions
-		const template = this.refName ? getPartialTemplate( this.ractive, this.refName, this.parentFragment ) || null : null;
+		const template = this.refName ? getPartialTemplate( this.ractive, this.refName, this._parentFragment ) || null : null;
 		let templateObj;
 
 		if ( template ) {
 			this.named = true;
-			this.setTemplate( this.template.r, template );
+			this.setTemplate( this._template.r, template );
 		}
 
 		if ( !template ) {
@@ -44,11 +44,11 @@ export default class Partial extends MustacheContainer {
 			if ( this.model && ( templateObj = this.model.get() ) && typeof templateObj === 'object' && ( typeof templateObj.template === 'string' || isArray( templateObj.t ) ) ) {
 				if ( templateObj.template ) {
 					this.source = templateObj.template;
-					templateObj = parsePartial( this.template.r, templateObj.template, this.ractive );
+					templateObj = parsePartial( this._template.r, templateObj.template, this.ractive );
 				} else {
 					this.source = templateObj.t;
 				}
-				this.setTemplate( this.template.r, templateObj.t );
+				this.setTemplate( this._template.r, templateObj.t );
 			} else if ( ( !this.model || typeof this.model.get() !== 'string' ) && this.refName ) {
 				this.setTemplate( this.refName, template );
 			} else {
@@ -58,13 +58,13 @@ export default class Partial extends MustacheContainer {
 
 		const options = {
 			owner: this,
-			template: this.partialTemplate
+			_template: this.partialTemplate
 		};
 
-		if ( this.template.c ) {
-			options.template = [{ t: SECTION, n: SECTION_WITH, f: options.template }];
-			for ( const k in this.template.c ) {
-				options.template[0][k] = this.template.c[k];
+		if ( this._template.c ) {
+			options._template = [{ t: SECTION, n: SECTION_WITH, f: options._template }];
+			for ( const k in this._template.c ) {
+				options._template[0][k] = this._template.c[k];
 			}
 		}
 
@@ -72,11 +72,11 @@ export default class Partial extends MustacheContainer {
 			options.ractive = this.container.parent;
 		}
 
-		this.fragment = new Fragment(options);
-		if ( this.template.z ) {
-			this.fragment.aliases = resolveAliases( this.template.z, this.yielder ? this.containerFragment : this.parentFragment );
+		this._fragment = new Fragment(options);
+		if ( this._template.z ) {
+			this._fragment.aliases = resolveAliases( this._template.z, this.yielder ? this.containerFragment : this._parentFragment );
 		}
-		this.fragment.bind();
+		this._fragment.bind();
 	}
 
 	bubble () {
@@ -97,12 +97,12 @@ export default class Partial extends MustacheContainer {
 
 		// on reset, check for the reference name first
 		if ( this.refName ) {
-			this.partialTemplate = getPartialTemplate( this.ractive, this.refName, this.parentFragment );
+			this.partialTemplate = getPartialTemplate( this.ractive, this.refName, this._parentFragment );
 		}
 
 		// then look for the resolved name
 		if ( !this.partialTemplate ) {
-			this.partialTemplate = getPartialTemplate( this.ractive, this.name, this.parentFragment );
+			this.partialTemplate = getPartialTemplate( this.ractive, this.name, this._parentFragment );
 		}
 
 		if ( !this.partialTemplate ) {
@@ -111,22 +111,22 @@ export default class Partial extends MustacheContainer {
 		}
 
 		if ( this.inAttribute ) {
-			doInAttributes( () => this.fragment.resetTemplate( this.partialTemplate ) );
+			doInAttributes( () => this._fragment.resetTemplate( this.partialTemplate ) );
 		} else {
-			this.fragment.resetTemplate( this.partialTemplate );
+			this._fragment.resetTemplate( this.partialTemplate );
 		}
 
 		this.bubble();
 	}
 
 	render ( target, occupants ) {
-		return this.fragment.render( target, occupants );
+		return this._fragment.render( target, occupants );
 	}
 
 	setTemplate ( name, template ) {
 		this.name = name;
 
-		if ( !template && template !== null ) template = getPartialTemplate( this.ractive, name, this.parentFragment );
+		if ( !template && template !== null ) template = getPartialTemplate( this.ractive, name, this._parentFragment );
 
 		if ( !template ) {
 			warnOnceIfDebug( `Could not find template for partial '${name}'` );
@@ -137,12 +137,12 @@ export default class Partial extends MustacheContainer {
 
 	unbind () {
 		super.unbind();
-		this.fragment.aliases = {};
-		this.fragment.unbind();
+		this._fragment.aliases = {};
+		this._fragment.unbind();
 	}
 
 	unrender ( shouldDestroy ) {
-		this.fragment.unrender( shouldDestroy );
+		this._fragment.unrender( shouldDestroy );
 	}
 
 	update () {
@@ -158,7 +158,7 @@ export default class Partial extends MustacheContainer {
 
 				if ( template && typeof template === 'string' && template !== this.name ) {
 					this.setTemplate( template );
-					this.fragment.resetTemplate( this.partialTemplate );
+					this._fragment.resetTemplate( this.partialTemplate );
 				} else if ( template && typeof template === 'object' && ( typeof template.template === 'string' || isArray( template.t ) ) ) {
 					if ( template.t !== this.source && template.template !== this.source ) {
 						if ( template.template ) {
@@ -168,12 +168,12 @@ export default class Partial extends MustacheContainer {
 							this.source = template.t;
 						}
 						this.setTemplate( this.name, template.t );
-						this.fragment.resetTemplate( this.partialTemplate );
+						this._fragment.resetTemplate( this.partialTemplate );
 					}
 				}
 			}
 
-			this.fragment.update();
+			this._fragment.update();
 		}
 	}
 }

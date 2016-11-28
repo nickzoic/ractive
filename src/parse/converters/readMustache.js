@@ -23,7 +23,7 @@ export default function readMustache ( parser ) {
 	if ( parser.inTag && !parser.inAttribute ) {
 		mustache = readAttributeOrDirective( parser );
 		if ( mustache ) {
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 			return mustache;
 		}
 	}
@@ -34,18 +34,18 @@ function readMustacheOfType ( parser, tag ) {
 
 	const start = parser.pos;
 
-	if ( parser.matchString( '\\' + tag.open ) ) {
+	if ( parser._matchString( '\\' + tag.open ) ) {
 		if ( start === 0 || parser.str[ start - 1 ] !== '\\' ) {
 			return tag.open;
 		}
-	} else if ( !parser.matchString( tag.open ) ) {
+	} else if ( !parser._matchString( tag.open ) ) {
 		return null;
 	}
 
 	// delimiter change?
 	if ( mustache = readDelimiterChange( parser ) ) {
 		// find closing delimiter or abort...
-		if ( !parser.matchString( tag.close ) ) {
+		if ( !parser._matchString( tag.close ) ) {
 			return null;
 		}
 
@@ -57,10 +57,10 @@ function readMustacheOfType ( parser, tag ) {
 		return delimiterChangeToken;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	// illegal section closer
-	if ( parser.matchString( '/' ) ) {
+	if ( parser._matchString( '/' ) ) {
 		parser.pos -= 1;
 		const rewind = parser.pos;
 		if ( !readRegexpLiteral( parser ) ) {

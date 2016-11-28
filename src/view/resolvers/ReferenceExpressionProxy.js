@@ -37,13 +37,13 @@ class ReferenceExpressionChild extends Model {
 	joinKey ( key ) {
 		if ( key === undefined || key === '' ) return this;
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !this._childByKey.hasOwnProperty( key ) ) {
 			const child = new ReferenceExpressionChild( this, key );
 			this.children.push( child );
-			this.childByKey[ key ] = child;
+			this._childByKey[ key ] = child;
 		}
 
-		return this.childByKey[ key ];
+		return this._childByKey[ key ];
 	}
 
 	retrieve () {
@@ -56,8 +56,8 @@ export default class ReferenceExpressionProxy extends Model {
 	constructor ( fragment, template ) {
 		super( null, null );
 		this.dirty = true;
-		this.root = fragment.ractive.viewmodel;
-		this.template = template;
+		this.root = fragment.ractive._viewmodel;
+		this._template = template;
 
 		this.resolvers = [];
 
@@ -76,7 +76,7 @@ export default class ReferenceExpressionProxy extends Model {
 		}
 
 		const intermediary = this.intermediary = {
-			handleChange: () => this.handleChange(),
+			_handleChange: () => this._handleChange(),
 			rebind: ( next, previous ) => {
 				if ( previous === this.base ) {
 					next = rebindMatch( template, next, previous );
@@ -122,7 +122,7 @@ export default class ReferenceExpressionProxy extends Model {
 						this.members[i] = model;
 
 						model.register( intermediary );
-						this.handleChange();
+						this._handleChange();
 
 						removeFromArray( this.resolvers, resolver );
 					});
@@ -144,7 +144,7 @@ export default class ReferenceExpressionProxy extends Model {
 
 	bubble () {
 		if ( !this.base ) return;
-		if ( !this.dirty ) this.handleChange();
+		if ( !this.dirty ) this._handleChange();
 	}
 
 	forceResolution () {
@@ -178,7 +178,7 @@ export default class ReferenceExpressionProxy extends Model {
 					this.model.register( this );
 					this.model.registerTwowayBinding( this );
 
-					if ( this.keypathModel ) this.keypathModel.handleChange();
+					if ( this.keypathModel ) this.keypathModel._handleChange();
 				}
 			}
 
@@ -208,11 +208,11 @@ export default class ReferenceExpressionProxy extends Model {
 		return this.value;
 	}
 
-	getKeypath () {
-		return this.model ? this.model.getKeypath() : '@undefined';
+	_getKeypath () {
+		return this.model ? this.model._getKeypath() : '@undefined';
 	}
 
-	handleChange () {
+	_handleChange () {
 		this.dirty = true;
 		this.mark();
 	}
@@ -220,13 +220,13 @@ export default class ReferenceExpressionProxy extends Model {
 	joinKey ( key ) {
 		if ( key === undefined || key === '' ) return this;
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !this._childByKey.hasOwnProperty( key ) ) {
 			const child = new ReferenceExpressionChild( this, key );
 			this.children.push( child );
-			this.childByKey[ key ] = child;
+			this._childByKey[ key ] = child;
 		}
 
-		return this.childByKey[ key ];
+		return this._childByKey[ key ];
 	}
 
 	mark () {

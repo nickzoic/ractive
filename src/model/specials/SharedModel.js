@@ -13,7 +13,7 @@ export class SharedModel extends Model {
 		this.adaptors = [];
 	}
 
-	getKeypath() {
+	_getKeypath() {
 		return this.key;
 	}
 

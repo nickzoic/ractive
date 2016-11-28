@@ -33,5 +33,5 @@ export function merge ( ractive, model, array, options ) {
 }
 
 export default function thisRactive$merge ( keypath, array, options ) {
-	return merge( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), array, options );
+	return merge( this, this._viewmodel.joinAll( splitKeypath( keypath ) ), array, options );
 }

@@ -18,22 +18,22 @@ export default function readSection ( parser, tag ) {
 
 	const start = parser.pos;
 
-	if ( parser.matchString( '^' ) ) {
+	if ( parser._matchString( '^' ) ) {
 		// watch out for parent context refs - {{^^/^^/foo}}
-		if ( parser.matchString( '^/' ) ){
+		if ( parser._matchString( '^/' ) ){
 			parser.pos = start;
 			return null;
 		}
 		section = { t: SECTION, f: [], n: SECTION_UNLESS };
-	} else if ( parser.matchString( '#' ) ) {
+	} else if ( parser._matchString( '#' ) ) {
 		section = { t: SECTION, f: [] };
 
-		if ( parser.matchString( 'partial' ) ) {
+		if ( parser._matchString( 'partial' ) ) {
 			parser.pos = start - parser.standardDelimiters[0].length;
 			parser.error( 'Partial definitions can only be at the top level of the template, or immediately inside components' );
 		}
 
-		if ( block = parser.matchPattern( handlebarsBlockPattern ) ) {
+		if ( block = parser._matchPattern( handlebarsBlockPattern ) ) {
 			expectedClose = block;
 			section.n = handlebarsBlockCodes[ block ];
 		}
@@ -41,7 +41,7 @@ export default function readSection ( parser, tag ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	if ( block === 'with' ) {
 		const aliases = readAliases( parser );
@@ -66,10 +66,10 @@ export default function readSection ( parser, tag ) {
 		}
 
 		// optional index and key references
-		if ( i = parser.matchPattern( indexRefPattern ) ) {
+		if ( i = parser._matchPattern( indexRefPattern ) ) {
 			let extra;
 
-			if ( extra = parser.matchPattern( keyIndexRefPattern ) ) {
+			if ( extra = parser._matchPattern( keyIndexRefPattern ) ) {
 				section.i = i + ',' + extra;
 			} else {
 				section.i = i;
@@ -77,9 +77,9 @@ export default function readSection ( parser, tag ) {
 		}
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( tag.close ) ) {
+	if ( !parser._matchString( tag.close ) ) {
 		parser.error( `Expected closing delimiter '${tag.close}'` );
 	}
 

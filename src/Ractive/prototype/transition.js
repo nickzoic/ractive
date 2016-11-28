@@ -29,7 +29,7 @@ export default function Ractive$transition ( name, node, params ) {
 
 	params = params || {};
 	const owner = node._ractive.proxy;
-	const transition = new Transition({ owner, parentFragment: owner.parentFragment, name, params });
+	const transition = new Transition({ owner, parentFragment: owner._parentFragment, name, params });
 	transition.bind();
 
 	const promise = runloop.start( this, true );

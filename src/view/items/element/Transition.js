@@ -27,11 +27,11 @@ const names = {
 
 export default class Transition {
 	constructor ( options ) {
-		this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-		this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment );
+		this.owner = options.owner || options._parentFragment.owner || findElement( options._parentFragment );
+		this._element = this.owner._attributeByName ? this.owner : findElement( options._parentFragment );
 		this.ractive = this.owner.ractive;
-		this.template = options.template;
-		this.parentFragment = options.parentFragment;
+		this._template = options._template;
+		this._parentFragment = options._parentFragment;
 		this.options = options;
 		this.onComplete = [];
 	}
@@ -115,15 +115,15 @@ export default class Transition {
 
 	bind () {
 		const options = this.options;
-		if ( options.template ) {
-			if ( options.template.v === 't0' || options.template.v == 't1' ) this.element.intro = this;
-			if ( options.template.v === 't0' || options.template.v == 't2' ) this.element.outro = this;
-			this.eventName = names[ options.template.v ];
+		if ( options._template ) {
+			if ( options._template.v === 't0' || options._template.v == 't1' ) this._element.intro = this;
+			if ( options._template.v === 't0' || options._template.v == 't2' ) this._element.outro = this;
+			this.eventName = names[ options._template.v ];
 		}
 
 		const ractive = this.owner.ractive;
 
-		this.name = options.name || options.template.n;
+		this.name = options.name || options._template.n;
 
 		if ( options.params ) {
 			this.params = options.params;
@@ -140,7 +140,7 @@ export default class Transition {
 			warnOnceIfDebug( missingPlugin( this.name, 'transition' ), { ractive });
 		}
 
-		setupArgsFn( this, options.template, this.parentFragment );
+		setupArgsFn( this, options._template, this._parentFragment );
 	}
 
 	getParams () {
@@ -207,7 +207,7 @@ export default class Transition {
 		const idx = this.models.indexOf( previous );
 		if ( !~idx ) return;
 
-		next = rebindMatch( this.template.f.r[ idx ], next, previous );
+		next = rebindMatch( this._template.f.r[ idx ], next, previous );
 		if ( next === previous ) return;
 
 		previous.unregister( this );
@@ -245,7 +245,7 @@ export default class Transition {
 
 		const params = this.getParams(); // this is an array, the params object should be the first member
 		// if there's not a parent element, this can't be nested, so roll on
-		if ( !this.element.parent ) return true;
+		if ( !this._element.parent ) return true;
 
 		// if there is a local param, it takes precedent
 		if ( params && params[0] && 'nested' in params[0] ) {
@@ -256,7 +256,7 @@ export default class Transition {
 		}
 
 		// check to see if this is actually a nested transition
-		let el = this.element.parent;
+		let el = this._element.parent;
 		while ( el ) {
 			if ( el[type] && el[type].starting ) return false;
 			el = el.parent;
@@ -266,7 +266,7 @@ export default class Transition {
 	}
 
 	start () {
-		const node = this.node = this.element.node;
+		const node = this.node = this._element.node;
 		const originalStyle = node.getAttribute( 'style' );
 
 		let completed;
@@ -288,7 +288,7 @@ export default class Transition {
 
 			this._manager.remove( this );
 
-			if ( this.shouldUnbind ) teardownArgsFn( this, this.options.template );
+			if ( this.shouldUnbind ) teardownArgsFn( this, this.options._template );
 
 			completed = true;
 		};

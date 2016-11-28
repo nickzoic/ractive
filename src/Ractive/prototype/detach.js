@@ -12,7 +12,7 @@ export default function Ractive$detach () {
 		removeFromArray( this.el.__ractive_instances__, this );
 	}
 
-	this.el = this.fragment.detach();
+	this.el = this._fragment.detach();
 	this.isDetached = true;
 
 	detachHook.fire( this );

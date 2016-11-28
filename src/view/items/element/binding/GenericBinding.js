@@ -40,8 +40,8 @@ export default class GenericBinding extends Binding {
 		let lazy = this.ractive.lazy;
 		let timeout = false;
 
-		if ( 'lazy' in this.element ) {
-			lazy = this.element.lazy;
+		if ( 'lazy' in this._element ) {
+			lazy = this._element.lazy;
 		}
 
 		if ( isNumeric( lazy ) ) {
@@ -67,7 +67,7 @@ export default class GenericBinding extends Binding {
 	}
 
 	unrender () {
-		const node = this.element.node;
+		const node = this._element.node;
 		this.rendered = false;
 
 		node.removeEventListener( 'change', handleDomEvent, false );

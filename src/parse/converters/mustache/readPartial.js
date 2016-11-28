@@ -4,15 +4,15 @@ import refineExpression from '../../utils/refineExpression';
 import { readAliases } from './readAliases';
 
 export default function readPartial ( parser, tag ) {
-	const type = parser.matchString( '>' ) || parser.matchString( 'yield' );
+	const type = parser._matchString( '>' ) || parser._matchString( 'yield' );
 	const partial = { t: type === '>' ? PARTIAL : YIELDER };
 	let aliases;
 
 	if ( !type ) return null;
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( type === '>' || !( aliases = parser.matchString( 'with' ) ) ) {
+	if ( type === '>' || !( aliases = parser._matchString( 'with' ) ) ) {
 		// Partial names can include hyphens, so we can't use readExpression
 		// blindly. Instead, we use the `relaxedNames` flag to indicate that
 		// `foo-bar` should be read as a single name, rather than 'subtract
@@ -25,12 +25,12 @@ export default function readPartial ( parser, tag ) {
 
 		if ( expression ) {
 			refineExpression( expression, partial ); // TODO...
-			parser.allowWhitespace();
-			if ( type !== '>' ) aliases = parser.matchString( 'with' );
+			parser._allowWhitespace();
+			if ( type !== '>' ) aliases = parser._matchString( 'with' );
 		}
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	// check for alias context e.g. `{{>foo bar as bat, bip as bop}}`
 	if ( aliases || type === '>' ) {
@@ -55,9 +55,9 @@ export default function readPartial ( parser, tag ) {
 		}
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( tag.close ) ) {
+	if ( !parser._matchString( tag.close ) ) {
 		parser.error( `Expected closing delimiter '${tag.close}'` );
 	}
 

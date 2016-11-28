@@ -10,7 +10,7 @@ export default class FileBinding extends GenericBinding {
 	}
 
 	render () {
-		this.element.lazy = false;
+		this._element.lazy = false;
 		super.render();
 	}
 

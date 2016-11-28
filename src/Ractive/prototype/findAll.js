@@ -10,12 +10,12 @@ export default function Ractive$findAll ( selector, options = {} ) {
 		if ( query.old ) return query.old;
 	}
 
-	this.fragment.findAll( selector, query );
+	this._fragment.findAll( selector, query );
 
 	if ( query.remote ) {
 		// seach non-fragment children
 		this._children.forEach( c => {
-			if ( !c.target && c.instance.fragment && c.instance.fragment.rendered ) {
+			if ( !c.target && c.instance._fragment && c.instance._fragment.rendered ) {
 				c.instance.findAll( selector, options );
 			}
 		});

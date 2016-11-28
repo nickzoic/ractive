@@ -15,11 +15,11 @@ export default class SingleSelectBinding extends Binding {
 	}
 
 	getInitialValue () {
-		if ( this.element.getAttribute( 'value' ) !== undefined ) {
+		if ( this._element.getAttribute( 'value' ) !== undefined ) {
 			return;
 		}
 
-		const options = this.element.options;
+		const options = this._element.options;
 		const len = options.length;
 
 		if ( !len ) return;
@@ -56,7 +56,7 @@ export default class SingleSelectBinding extends Binding {
 		// other more expensive work
 		// TODO does it still work? seems at odds with new architecture
 		if ( value !== undefined ) {
-			this.element.attributeByName.value.value = value;
+			this._element._attributeByName.value.value = value;
 		}
 
 		return value;

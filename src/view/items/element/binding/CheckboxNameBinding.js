@@ -7,7 +7,7 @@ import handleDomEvent from './handleDomEvent';
 const push = [].push;
 
 function getValue() {
-	const all = this.bindings.filter(b => b.node && b.node.checked).map(b => b.element.getAttribute( 'value' ));
+	const all = this.bindings.filter(b => b.node && b.node.checked).map(b => b._element.getAttribute( 'value' ));
 	const res = [];
 	all.forEach(v => { if ( !arrayContains( res, v ) ) res.push( v ); });
 	return res;
@@ -31,9 +31,9 @@ export default class CheckboxNameBinding extends Binding {
 
 		// If no initial value was set, and this input is checked, we
 		// update the model
-		if ( this.group.noInitialValue && this.element.getAttribute( 'checked' ) ) {
+		if ( this.group.noInitialValue && this._element.getAttribute( 'checked' ) ) {
 			const existingValue = this.model.get();
-			const bindingValue = this.element.getAttribute( 'value' );
+			const bindingValue = this._element.getAttribute( 'value' );
 
 			if ( !arrayContains( existingValue, bindingValue ) ) {
 				push.call( existingValue, bindingValue ); // to avoid triggering runloop with array adaptor
@@ -63,10 +63,10 @@ export default class CheckboxNameBinding extends Binding {
 		return this.group.value;
 	}
 
-	handleChange () {
-		this.isChecked = this.element.node.checked;
+	_handleChange () {
+		this.isChecked = this._element.node.checked;
 		this.group.value = this.model.get();
-		const value = this.element.getAttribute( 'value' );
+		const value = this._element.getAttribute( 'value' );
 		if ( this.isChecked && !arrayContains( this.group.value, value ) ) {
 			this.group.value.push( value );
 		} else if ( !this.isChecked && arrayContains( this.group.value, value ) ) {
@@ -74,7 +74,7 @@ export default class CheckboxNameBinding extends Binding {
 		}
 		// make sure super knows there's a change
 		this.lastValue = null;
-		super.handleChange();
+		super._handleChange();
 	}
 
 	render () {
@@ -83,7 +83,7 @@ export default class CheckboxNameBinding extends Binding {
 		const node = this.node;
 
 		const existingValue = this.model.get();
-		const bindingValue = this.element.getAttribute( 'value' );
+		const bindingValue = this._element.getAttribute( 'value' );
 
 		if ( isArray( existingValue ) ) {
 			this.isChecked = arrayContains( existingValue, bindingValue );
@@ -91,7 +91,7 @@ export default class CheckboxNameBinding extends Binding {
 			this.isChecked = existingValue == bindingValue;
 		}
 
-		node.name = '{{' + this.model.getKeypath() + '}}';
+		node.name = '{{' + this.model._getKeypath() + '}}';
 		node.checked = this.isChecked;
 
 		node.addEventListener( 'change', handleDomEvent, false );
@@ -107,7 +107,7 @@ export default class CheckboxNameBinding extends Binding {
 
 		if ( node.checked ) {
 			const valueSoFar = this.group.getValue();
-			valueSoFar.push( this.element.getAttribute( 'value' ) );
+			valueSoFar.push( this._element.getAttribute( 'value' ) );
 
 			this.group.model.set( valueSoFar );
 		}
@@ -118,7 +118,7 @@ export default class CheckboxNameBinding extends Binding {
 	}
 
 	unrender () {
-		const node = this.element.node;
+		const node = this._element.node;
 
 		node.removeEventListener( 'change', handleDomEvent, false );
 		node.removeEventListener( 'click', handleDomEvent, false );

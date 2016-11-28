@@ -15,15 +15,15 @@ export default function Ractive$findAllComponents ( selector, options ) {
 		if ( query.old ) return query.old;
 	}
 
-	this.fragment.findAllComponents( selector, query );
+	this._fragment.findAllComponents( selector, query );
 
 	if ( query.remote ) {
 		// search non-fragment children
 		this._children.forEach( c => {
-			if ( !c.target && c.instance.fragment && c.instance.fragment.rendered ) {
+			if ( !c.target && c.instance._fragment && c.instance._fragment.rendered ) {
 				if ( query.test( c ) ) {
 					query.add( c.instance );
-					c.liveQueries.push( query );
+					c.__liveQueries.push( query );
 				}
 
 				c.instance.findAllComponents( selector, options );

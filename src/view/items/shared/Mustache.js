@@ -6,12 +6,12 @@ export default class Mustache extends Item {
 	constructor ( options ) {
 		super( options );
 
-		this.parentFragment = options.parentFragment;
-		this.template = options.template;
+		this._parentFragment = options._parentFragment;
+		this._template = options._template;
 		this.index = options.index;
 		if ( options.owner ) this.parent = options.owner;
 
-		this.isStatic = !!options.template.s;
+		this.isStatic = !!options._template.s;
 
 		this.model = null;
 		this.dirty = false;
@@ -19,9 +19,9 @@ export default class Mustache extends Item {
 
 	bind () {
 		// yield mustaches should resolve in container context
-		const start = this.containerFragment || this.parentFragment;
+		const start = this.containerFragment || this._parentFragment;
 		// try to find a model for this view
-		const model = resolve( start, this.template );
+		const model = resolve( start, this._template );
 		const value = model ? model.get() : undefined;
 
 		if ( this.isStatic ) {
@@ -33,22 +33,22 @@ export default class Mustache extends Item {
 			model.register( this );
 			this.model = model;
 		} else {
-			this.resolver = start.resolve( this.template.r, model => {
+			this.resolver = start.resolve( this._template.r, model => {
 				this.model = model;
 				model.register( this );
 
-				this.handleChange();
+				this._handleChange();
 				this.resolver = null;
 			});
 		}
 	}
 
-	handleChange () {
+	_handleChange () {
 		this.bubble();
 	}
 
 	rebind ( next, previous, safe ) {
-		next = rebindMatch( this.template, next, previous, this.parentFragment );
+		next = rebindMatch( this._template, next, previous, this._parentFragment );
 		if ( next === this.model ) return false;
 
 		if ( this.model ) {
@@ -56,7 +56,7 @@ export default class Mustache extends Item {
 		}
 		if ( next ) next.addShuffleRegister( this, 'mark' );
 		this.model = next;
-		if ( !safe ) this.handleChange();
+		if ( !safe ) this._handleChange();
 		return true;
 	}
 
@@ -77,6 +77,6 @@ export class MustacheContainer extends ContainerItem {
 const proto = MustacheContainer.prototype;
 const mustache = Mustache.prototype;
 proto.bind = mustache.bind;
-proto.handleChange = mustache.handleChange;
+proto._handleChange = mustache._handleChange;
 proto.rebind = mustache.rebind;
 proto.unbind = mustache.unbind;

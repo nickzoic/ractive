@@ -12,8 +12,8 @@ function collect( source, name, attr, dest ) {
 		}
 
 		// if it has a fragment, process its items
-		if ( item.fragment ) {
-			collect( item.fragment.iterations || item.fragment.items, name, attr, dest );
+		if ( item._fragment ) {
+			collect( item._fragment._iterations || item._fragment.items, name, attr, dest );
 		}
 
 		// or if it is itself a fragment, process its items
@@ -25,7 +25,7 @@ function collect( source, name, attr, dest ) {
 		else if ( item.type === COMPONENT && item.instance ) {
 			// ...unless the partial is shadowed
 			if ( item.instance.partials[ name ] ) return;
-			collect( item.instance.fragment.items, name, attr, dest );
+			collect( item.instance._fragment.items, name, attr, dest );
 		}
 
 		// if the item is an element, process its attributes too
@@ -43,7 +43,7 @@ function forceResetTemplate ( partial ) {
 
 export default function ( name, partial ) {
 	const collection = [];
-	collect( this.fragment.items, name, false, collection );
+	collect( this._fragment.items, name, false, collection );
 
 	const promise = runloop.start( this, true );
 

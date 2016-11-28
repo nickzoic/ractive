@@ -13,12 +13,12 @@ export default function link( there, here, options ) {
 
 	// may need to allow a mapping to resolve implicitly
 	const sourcePath = splitKeypath( there );
-	if ( !target.viewmodel.has( sourcePath[0] ) && target.component ) {
-		model = resolveReference( target.component.parentFragment, sourcePath[0] );
+	if ( !target._viewmodel.has( sourcePath[0] ) && target.component ) {
+		model = resolveReference( target.component._parentFragment, sourcePath[0] );
 		model = model.joinAll( sourcePath.slice( 1 ) );
 	}
 
-	this.viewmodel.joinAll( splitKeypath( here ) ).link( model || target.viewmodel.joinAll( sourcePath ), there );
+	this._viewmodel.joinAll( splitKeypath( here ) ).link( model || target._viewmodel.joinAll( sourcePath ), there );
 
 	runloop.end();
 

@@ -6,7 +6,7 @@ const numberPattern = /^(?:[+-]?)0*(?:(?:(?:[1-9]\d*)?\.\d+)|(?:(?:0|[1-9]\d*)\.
 export default function readNumberLiteral ( parser ) {
 	let result;
 
-	if ( result = parser.matchPattern( numberPattern ) ) {
+	if ( result = parser._matchPattern( numberPattern ) ) {
 		return {
 			t: NUMBER_LITERAL,
 			v: result

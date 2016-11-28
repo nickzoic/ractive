@@ -122,14 +122,14 @@ Parser.prototype = {
 		throw error;
 	},
 
-	matchString ( string ) {
+	_matchString ( string ) {
 		if ( this.str.substr( this.pos, string.length ) === string ) {
 			this.pos += string.length;
 			return string;
 		}
 	},
 
-	matchPattern ( pattern ) {
+	_matchPattern ( pattern ) {
 		let match;
 
 		if ( match = pattern.exec( this.remaining() ) ) {
@@ -138,8 +138,8 @@ Parser.prototype = {
 		}
 	},
 
-	allowWhitespace () {
-		this.matchPattern( leadingWhitespace );
+	_allowWhitespace () {
+		this._matchPattern( leadingWhitespace );
 	},
 
 	remaining () {

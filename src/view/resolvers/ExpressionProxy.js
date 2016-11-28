@@ -9,7 +9,7 @@ import { warnIfDebug } from '../../utils/log';
 import { rebindMatch } from '../../shared/rebind';
 
 function createResolver ( proxy, ref, index ) {
-	const resolver = proxy.fragment.resolve( ref, model => {
+	const resolver = proxy._fragment.resolve( ref, model => {
 		removeFromArray( proxy.resolvers, resolver );
 		proxy.models[ index ] = model;
 		proxy.bubble();
@@ -20,10 +20,10 @@ function createResolver ( proxy, ref, index ) {
 
 export default class ExpressionProxy extends Model {
 	constructor ( fragment, template ) {
-		super( fragment.ractive.viewmodel, null );
+		super( fragment.ractive._viewmodel, null );
 
-		this.fragment = fragment;
-		this.template = template;
+		this._fragment = fragment;
+		this._template = template;
 
 		this.isReadonly = true;
 		this.dirty = true;
@@ -31,8 +31,8 @@ export default class ExpressionProxy extends Model {
 		this.fn = getFunction( template.s, template.r.length );
 
 		this.resolvers = [];
-		this.models = this.template.r.map( ( ref, index ) => {
-			const model = resolveReference( this.fragment, ref );
+		this.models = this._template.r.map( ( ref, index ) => {
+			const model = resolveReference( this._fragment, ref );
 
 			if ( !model ) {
 				createResolver( this, ref, index );
@@ -52,18 +52,18 @@ export default class ExpressionProxy extends Model {
 		this.keypath = undefined;
 
 		if ( actuallyChanged ) {
-			this.handleChange();
+			this._handleChange();
 		}
 	}
 
-	getKeypath () {
-		if ( !this.template ) return '@undefined';
+	_getKeypath () {
+		if ( !this._template ) return '@undefined';
 		if ( !this.keypath ) {
-			this.keypath = '@' + this.template.s.replace( /_(\d+)/g, ( match, i ) => {
+			this.keypath = '@' + this._template.s.replace( /_(\d+)/g, ( match, i ) => {
 				if ( i >= this.models.length ) return match;
 
 				const model = this.models[i];
-				return model ? model.getKeypath() : '@undefined';
+				return model ? model._getKeypath() : '@undefined';
 			});
 		}
 
@@ -76,9 +76,9 @@ export default class ExpressionProxy extends Model {
 
 		try {
 			const params = this.models.map( m => m ? m.get( true ) : undefined );
-			result = this.fn.apply( this.fragment.ractive, params );
+			result = this.fn.apply( this._fragment.ractive, params );
 		} catch ( err ) {
-			warnIfDebug( `Failed to compute ${this.getKeypath()}: ${err.message || err}` );
+			warnIfDebug( `Failed to compute ${this._getKeypath()}: ${err.message || err}` );
 		}
 
 		const dependencies = stopCapturing();
@@ -100,7 +100,7 @@ export default class ExpressionProxy extends Model {
 		const idx = this.models.indexOf( previous );
 
 		if ( ~idx ) {
-			next = rebindMatch( this.template.r[idx], next, previous );
+			next = rebindMatch( this._template.r[idx], next, previous );
 			if ( next !== previous ) {
 				previous.unregister( this );
 				this.models.splice( idx, 1, next );
@@ -117,7 +117,7 @@ export default class ExpressionProxy extends Model {
 
 	teardown () {
 		this.unbind();
-		this.fragment = undefined;
+		this._fragment = undefined;
 		if ( this.dependencies ) this.dependencies.forEach( d => d.unregister( this ) );
 		super.teardown();
 	}
@@ -135,6 +135,6 @@ export default class ExpressionProxy extends Model {
 const prototype = ExpressionProxy.prototype;
 const computation = Computation.prototype;
 prototype.get = computation.get;
-prototype.handleChange = computation.handleChange;
+prototype._handleChange = computation._handleChange;
 prototype.joinKey = computation.joinKey;
 prototype.mark = computation.mark;

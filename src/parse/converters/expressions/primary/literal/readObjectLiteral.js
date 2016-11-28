@@ -5,9 +5,9 @@ export default function ( parser ) {
 	const start = parser.pos;
 
 	// allow whitespace
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '{' ) ) {
+	if ( !parser._matchString( '{' ) ) {
 		parser.pos = start;
 		return null;
 	}
@@ -15,9 +15,9 @@ export default function ( parser ) {
 	const keyValuePairs = readKeyValuePairs( parser );
 
 	// allow whitespace between final value and '}'
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '}' ) ) {
+	if ( !parser._matchString( '}' ) ) {
 		parser.pos = start;
 		return null;
 	}

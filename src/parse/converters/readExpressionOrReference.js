@@ -8,7 +8,7 @@ export default function readExpressionOrReference ( parser, expectedFollowers ) 
 
 	if ( !expression ) {
 		// valid reference but invalid expression e.g. `{{new}}`?
-		const ref = parser.matchPattern( /^(\w+)/ );
+		const ref = parser._matchPattern( /^(\w+)/ );
 		if ( ref ) {
 			return {
 				t: REFERENCE,

@@ -24,13 +24,13 @@ export default class Element extends ContainerItem {
 	constructor ( options ) {
 		super( options );
 
-		this.liveQueries = []; // TODO rare case. can we handle differently?
+		this.__liveQueries = []; // TODO rare case. can we handle differently?
 
-		this.name = options.template.e.toLowerCase();
+		this.name = options._template.e.toLowerCase();
 		this.isVoid = voidElementNames.test( this.name );
 
 		// find parent element
-		this.parent = findElement( this.parentFragment, false );
+		this.parent = findElement( this._parentFragment, false );
 
 		if ( this.parent && this.parent.name === 'option' ) {
 			throw new Error( `An <option> element cannot contain other elements (encountered <${this.name}>)` );
@@ -40,11 +40,11 @@ export default class Element extends ContainerItem {
 		this.events = [];
 
 		// create attributes
-		this.attributeByName = {};
+		this._attributeByName = {};
 
 		this.attributes = [];
 		const leftovers = [];
-		( this.template.m || [] ).forEach( template => {
+		( this._template.m || [] ).forEach( template => {
 			switch ( template.t ) {
 				case ATTRIBUTE:
 				case BINDING_FLAG:
@@ -53,8 +53,8 @@ export default class Element extends ContainerItem {
 				case TRANSITION:
 					this.attributes.push( createItem({
 						owner: this,
-						parentFragment: this.parentFragment,
-						template
+						_parentFragment: this._parentFragment,
+						_template: template
 					}) );
 					break;
 
@@ -67,17 +67,17 @@ export default class Element extends ContainerItem {
 		if ( leftovers.length ) {
 			this.attributes.push( new ConditionalAttribute({
 				owner: this,
-				parentFragment: this.parentFragment,
-				template: leftovers
+				_parentFragment: this._parentFragment,
+				_template: leftovers
 			}) );
 		}
 
 		this.attributes.sort( sortAttributes );
 
 		// create children
-		if ( options.template.f && !options.deferContent ) {
-			this.fragment = new Fragment({
-				template: options.template.f,
+		if ( options._template.f && !options.deferContent ) {
+			this._fragment = new Fragment({
+				_template: options._template.f,
 				owner: this,
 				cssIds: null
 			});
@@ -91,7 +91,7 @@ export default class Element extends ContainerItem {
 		this.attributes.forEach( bind );
 		this.attributes.binding = false;
 
-		if ( this.fragment ) this.fragment.bind();
+		if ( this._fragment ) this._fragment.bind();
 
 		// create two-way binding if necessary
 		if ( !this.binding ) this.recreateTwowayBinding();
@@ -109,7 +109,7 @@ export default class Element extends ContainerItem {
 
 	destroyed () {
 		this.attributes.forEach( destroyed );
-		if ( this.fragment ) this.fragment.destroyed();
+		if ( this._fragment ) this._fragment.destroyed();
 	}
 
 	detach () {
@@ -121,8 +121,8 @@ export default class Element extends ContainerItem {
 
 	find ( selector, options ) {
 		if ( this.node && matches( this.node, selector ) ) return this.node;
-		if ( this.fragment ) {
-			return this.fragment.find( selector, options );
+		if ( this._fragment ) {
+			return this._fragment.find( selector, options );
 		}
 	}
 
@@ -132,11 +132,11 @@ export default class Element extends ContainerItem {
 		const matches = query.test( this.node );
 		if ( matches ) {
 			query.add( this.node );
-			if ( query.live ) this.liveQueries.push( query );
+			if ( query.live ) this.__liveQueries.push( query );
 		}
 
-		if ( this.fragment ) {
-			this.fragment.findAll( selector, query );
+		if ( this._fragment ) {
+			this._fragment.findAll( selector, query );
 		}
 	}
 
@@ -149,7 +149,7 @@ export default class Element extends ContainerItem {
 	}
 
 	getAttribute ( name ) {
-		const attribute = this.attributeByName[ name ];
+		const attribute = this._attributeByName[ name ];
 		return attribute ? attribute.getValue() : undefined;
 	}
 
@@ -167,7 +167,7 @@ export default class Element extends ContainerItem {
 
 	removeFromQuery ( query ) {
 		query.remove( this.node );
-		removeFromArray( this.liveQueries, query );
+		removeFromArray( this.__liveQueries, query );
 	}
 
 	render ( target, occupants ) {
@@ -180,7 +180,7 @@ export default class Element extends ContainerItem {
 		if ( occupants ) {
 			let n;
 			while ( ( n = occupants.shift() ) ) {
-				if ( n.nodeName.toUpperCase() === this.template.e.toUpperCase() && n.namespaceURI === this.namespace ) {
+				if ( n.nodeName.toUpperCase() === this._template.e.toUpperCase() && n.namespaceURI === this.namespace ) {
 					this.node = node = n;
 					existing = true;
 					break;
@@ -191,7 +191,7 @@ export default class Element extends ContainerItem {
 		}
 
 		if ( !node ) {
-			node = createElement( this.template.e, this.namespace, this.getAttribute( 'is' ) );
+			node = createElement( this._template.e, this.namespace, this.getAttribute( 'is' ) );
 			this.node = node;
 		}
 
@@ -204,8 +204,8 @@ export default class Element extends ContainerItem {
 
 		// Is this a top-level node of a component? If so, we may need to add
 		// a data-ractive-css attribute, for CSS encapsulation
-		if ( this.parentFragment.cssIds ) {
-			node.setAttribute( 'data-ractive-css', this.parentFragment.cssIds.map( x => `{${x}}` ).join( ' ' ) );
+		if ( this._parentFragment.cssIds ) {
+			node.setAttribute( 'data-ractive-css', this._parentFragment.cssIds.map( x => `{${x}}` ).join( ' ' ) );
 		}
 
 		if ( existing && this.foundNode ) this.foundNode( node );
@@ -217,10 +217,10 @@ export default class Element extends ContainerItem {
 			runloop.registerTransition( intro );
 		}
 
-		if ( this.fragment ) {
+		if ( this._fragment ) {
 			const children = existing ? toArray( node.childNodes ) : undefined;
 
-			this.fragment.render( node, children );
+			this._fragment.render( node, children );
 
 			// clean up leftover children
 			if ( children ) {
@@ -235,7 +235,7 @@ export default class Element extends ContainerItem {
 			let i = node.attributes.length;
 			while ( i-- ) {
 				const name = node.attributes[i].name;
-				if ( !( name in this.attributeByName ) ) node.removeAttribute( name );
+				if ( !( name in this._attributeByName ) ) node.removeAttribute( name );
 			}
 		}
 
@@ -253,12 +253,12 @@ export default class Element extends ContainerItem {
 	}
 
 	shuffled () {
-		this.liveQueries.forEach( makeDirty );
+		this.__liveQueries.forEach( makeDirty );
 		super.shuffled();
 	}
 
 	toString () {
-		const tagName = this.template.e;
+		const tagName = this._template.e;
 
 		let attrs = this.attributes.map( stringifyAttribute ).join( '' );
 
@@ -304,8 +304,8 @@ export default class Element extends ContainerItem {
 			str += ( this.getAttribute( 'value' ) || '' );
 		}
 
-		if ( this.fragment ) {
-			str += this.fragment.toString( !/^(?:script|style)$/i.test( this.template.e ) ); // escape text unless script/style
+		if ( this._fragment ) {
+			str += this._fragment.toString( !/^(?:script|style)$/i.test( this._template.e ) ); // escape text unless script/style
 		}
 
 		str += `</${tagName}>`;
@@ -316,7 +316,7 @@ export default class Element extends ContainerItem {
 		this.attributes.forEach( unbind );
 
 		if ( this.binding ) this.binding.unbind();
-		if ( this.fragment ) this.fragment.unbind();
+		if ( this._fragment ) this._fragment.unbind();
 	}
 
 	unrender ( shouldDestroy ) {
@@ -345,12 +345,12 @@ export default class Element extends ContainerItem {
 			runloop.registerTransition( outro );
 		}
 
-		if ( this.fragment ) this.fragment.unrender();
+		if ( this._fragment ) this._fragment.unrender();
 
 		if ( this.binding ) this.binding.unrender();
 
-		this.liveQueries.forEach( query => query.remove( this.node ) );
-		this.liveQueries = [];
+		this.__liveQueries.forEach( query => query.remove( this.node ) );
+		this.__liveQueries = [];
 		// TODO forms are a special case
 	}
 
@@ -360,7 +360,7 @@ export default class Element extends ContainerItem {
 
 			this.attributes.forEach( update );
 
-			if ( this.fragment ) this.fragment.update();
+			if ( this._fragment ) this._fragment.update();
 		}
 	}
 }
@@ -375,7 +375,7 @@ function sortAttributes ( left, right ) {
 }
 
 function inputIsCheckedRadio ( element ) {
-	const nameAttr = element.attributeByName.name;
+	const nameAttr = element._attributeByName.name;
 	return element.getAttribute( 'type' ) === 'radio' &&
 		( nameAttr || {} ).interpolator &&
 		element.getAttribute( 'value' ) === nameAttr.interpolator.model.get();

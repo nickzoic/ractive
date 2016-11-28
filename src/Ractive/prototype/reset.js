@@ -23,14 +23,14 @@ export default function Ractive$reset ( data ) {
 	const promise = runloop.start( this, true );
 
 	// If the root object is wrapped, try and use the wrapper's reset value
-	const wrapper = this.viewmodel.wrapper;
+	const wrapper = this._viewmodel.wrapper;
 	if ( wrapper && wrapper.reset ) {
 		if ( wrapper.reset( data ) === false ) {
 			// reset was rejected, we need to replace the object
-			this.viewmodel.set( data );
+			this._viewmodel.set( data );
 		}
 	} else {
-		this.viewmodel.set( data );
+		this._viewmodel.set( data );
 	}
 
 	// reset config items and track if need to rerender
@@ -47,7 +47,7 @@ export default function Ractive$reset ( data ) {
 
 	if ( rerender ) {
 		unrenderHook.fire( this );
-		this.fragment.resetTemplate( this.template );
+		this._fragment.resetTemplate( this.template );
 		renderHook.fire( this );
 		completeHook.fire( this );
 	}

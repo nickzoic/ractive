@@ -26,7 +26,7 @@ export default function readInterpolator ( parser, tag ) {
 		}
 	}
 
-	if ( !parser.matchString( tag.close ) ) {
+	if ( !parser._matchString( tag.close ) ) {
 		parser.error( `Expected closing delimiter '${tag.close}' after reference` );
 
 		if ( !expression ) {

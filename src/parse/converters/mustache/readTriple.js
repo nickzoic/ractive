@@ -9,7 +9,7 @@ export default function readTriple ( parser, tag ) {
 		return null;
 	}
 
-	if ( !parser.matchString( tag.close ) ) {
+	if ( !parser._matchString( tag.close ) ) {
 		parser.error( `Expected closing delimiter '${tag.close}'` );
 	}
 

@@ -39,9 +39,9 @@ function splitEvent ( str ) {
 export default function readAttribute ( parser ) {
 	let name, i, nearest, idx;
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	name = parser.matchPattern( attributeNamePattern );
+	name = parser._matchPattern( attributeNamePattern );
 	if ( !name ) {
 		return null;
 	}
@@ -70,14 +70,14 @@ function readAttributeValue ( parser ) {
 		parser.error( 'Expected `=`, `/`, `>` or whitespace' );
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '=' ) ) {
+	if ( !parser._matchString( '=' ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const valueStart = parser.pos;
 	const startDepth = parser.sectionDepth;
@@ -111,7 +111,7 @@ function readUnquotedAttributeValueToken ( parser ) {
 
 	const start = parser.pos;
 
-	text = parser.matchPattern( unquotedAttributeValueTextPattern );
+	text = parser._matchPattern( unquotedAttributeValueTextPattern );
 
 	if ( !text ) {
 		return null;
@@ -150,7 +150,7 @@ function readUnquotedAttributeValue ( parser ) {
 function readQuotedAttributeValue ( parser, quoteMark ) {
 	const start = parser.pos;
 
-	if ( !parser.matchString( quoteMark ) ) {
+	if ( !parser._matchString( quoteMark ) ) {
 		return null;
 	}
 
@@ -164,7 +164,7 @@ function readQuotedAttributeValue ( parser, quoteMark ) {
 		token = readMustache( parser ) || readQuotedStringToken( parser, quoteMark );
 	}
 
-	if ( !parser.matchString( quoteMark ) ) {
+	if ( !parser._matchString( quoteMark ) ) {
 		parser.pos = start;
 		return null;
 	}
@@ -206,7 +206,7 @@ export function readAttributeOrDirective ( parser ) {
 		attribute.t = directive.t;
 		if ( directive.v ) attribute.v = directive.v;
 		delete attribute.n; // no name necessary
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 		if ( parser.nextChar() === '=' ) attribute.f = readAttributeValue( parser );
 	}
 
@@ -242,7 +242,7 @@ export function readAttributeOrDirective ( parser ) {
 	}
 
 	else {
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 		const value = parser.nextChar() === '=' ? readAttributeValue( parser ) : null;
 		attribute.f = value != null ? value : attribute.f;
 
@@ -259,18 +259,18 @@ export function readAttributeOrDirective ( parser ) {
 
 function readProxyEvent ( parser, attribute ) {
 	const start = parser.pos;
-	if ( !parser.matchString( '=' ) ) parser.error( `Missing required directive arguments` );
+	if ( !parser._matchString( '=' ) ) parser.error( `Missing required directive arguments` );
 
-	const quote = parser.matchString( `'` ) || parser.matchString( `"` );
-	parser.allowWhitespace();
-	const proxy = parser.matchPattern( proxyEvent );
+	const quote = parser._matchString( `'` ) || parser._matchString( `"` );
+	parser._allowWhitespace();
+	const proxy = parser._matchPattern( proxyEvent );
 
 	if ( proxy !== undefined ) {
 		if ( quote ) {
-			parser.allowWhitespace();
-			if ( !parser.matchString( quote ) ) parser.pos = start;
+			parser._allowWhitespace();
+			if ( !parser._matchString( quote ) ) parser.pos = start;
 			else return ( attribute.f = proxy ) || true;
-		} else if ( !parser.matchPattern( whitespace ) ) {
+		} else if ( !parser._matchPattern( whitespace ) ) {
 			parser.pos = start;
 		} else {
 			return ( attribute.f = proxy ) || true;
@@ -281,22 +281,22 @@ function readProxyEvent ( parser, attribute ) {
 }
 
 function readArguments ( parser, attribute, required = false ) {
-	parser.allowWhitespace();
-	if ( !parser.matchString( '=' ) ) {
+	parser._allowWhitespace();
+	if ( !parser._matchString( '=' ) ) {
 		if ( required ) parser.error( `Missing required directive arguments` );
 		return;
 	}
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	const quote = parser.matchString( '"' ) || parser.matchString( "'" );
+	const quote = parser._matchString( '"' ) || parser._matchString( "'" );
 	const spread = parser.spreadArgs;
 	parser.spreadArgs = true;
 	const exprs = readExpressionList( parser );
 	parser.spreadArgs = spread;
 
 	if ( quote ) {
-		parser.allowWhitespace();
-		if ( parser.matchString( quote ) !== quote ) parser.error( `Expected matching quote '${quote}'` );
+		parser._allowWhitespace();
+		if ( parser._matchString( quote ) !== quote ) parser.error( `Expected matching quote '${quote}'` );
 	}
 
 	attribute.f = flattenExpression({ m: exprs, t: 22 });

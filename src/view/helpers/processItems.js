@@ -4,16 +4,16 @@ import { TEXT } from '../../config/types';
 export default function processItems ( items, values, guid, counter = 0 ) {
 	return items.map( item => {
 		if ( item.type === TEXT ) {
-			return item.template;
+			return item._template;
 		}
 
-		if ( item.fragment ) {
-			if ( item.fragment.iterations ) {
-				return item.fragment.iterations.map( fragment => {
+		if ( item._fragment ) {
+			if ( item._fragment._iterations ) {
+				return item._fragment._iterations.map( fragment => {
 					return processItems( fragment.items, values, guid, counter );
 				}).join( '' );
 			} else {
-				return processItems( item.fragment.items, values, guid, counter );
+				return processItems( item._fragment.items, values, guid, counter );
 			}
 		}
 

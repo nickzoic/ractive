@@ -17,7 +17,7 @@ export default class ModelBase {
 		this.deps = [];
 
 		this.children = [];
-		this.childByKey = {};
+		this._childByKey = {};
 		this.links = [];
 
 		this.keyModels = {};
@@ -103,12 +103,12 @@ export default class ModelBase {
 		return this.keyModels[ key ];
 	}
 
-	getKeypath ( ractive ) {
-		if ( ractive !== this.ractive && this._link ) return this._link.target.getKeypath( ractive );
+	_getKeypath ( ractive ) {
+		if ( ractive !== this.ractive && this._link ) return this._link.target._getKeypath( ractive );
 
 		if ( !this.keypath ) {
-			const parent = this.parent && this.parent.getKeypath( ractive );
-			this.keypath = parent ? `${this.parent.getKeypath( ractive )}.${escapeKey( this.key )}` : escapeKey( this.key );
+			const parent = this.parent && this.parent._getKeypath( ractive );
+			this.keypath = parent ? `${this.parent._getKeypath( ractive )}.${escapeKey( this.key )}` : escapeKey( this.key );
 		}
 
 		return this.keypath;
@@ -145,7 +145,7 @@ export default class ModelBase {
 			const keys = Object.keys( value );
 			let i = keys.length;
 			while ( i-- ) {
-				const child = this.childByKey[ keys[i] ];
+				const child = this._childByKey[ keys[i] ];
 				if ( !child ) result[ keys[i] ] = value[ keys[i] ];
 				else if ( child._link ) result[ keys[i] ] = child._link.getVirtual();
 				else result[ keys[i] ] = child.getVirtual();
@@ -185,7 +185,7 @@ export default class ModelBase {
 	joinAll ( keys, opts ) {
 		let model = this;
 		for ( let i = 0; i < keys.length; i += 1 ) {
-			if ( opts && opts.lastLink === false && i + 1 === keys.length && model.childByKey[keys[i]] && model.childByKey[keys[i]]._link ) return model.childByKey[keys[i]];
+			if ( opts && opts.lastLink === false && i + 1 === keys.length && model._childByKey[keys[i]] && model._childByKey[keys[i]]._link ) return model._childByKey[keys[i]];
 			model = model.joinKey( keys[i], opts );
 		}
 
@@ -374,12 +374,12 @@ export function shuffle ( model, newIndices, link ) {
 		}
 
 		// rebind the children on i to idx
-		if ( i in model.childByKey ) model.childByKey[ i ].rebind( !~idx ? undefined : model.joinKey( idx ), model.childByKey[ i ], true );
+		if ( i in model._childByKey ) model._childByKey[ i ].rebind( !~idx ? undefined : model.joinKey( idx ), model._childByKey[ i ], true );
 
 		if ( !~idx && model.keyModels[ i ] ) {
 			model.keyModels[i].rebind( undefined, model.keyModels[i], false );
 		} else if ( ~idx && model.keyModels[ i ] ) {
-			if ( !model.keyModels[ idx ] ) model.childByKey[ idx ].getKeyModel( idx );
+			if ( !model.keyModels[ idx ] ) model._childByKey[ idx ].getKeyModel( idx );
 			model.keyModels[i].rebind( model.keyModels[ idx ], model.keyModels[i], false );
 		}
 	}

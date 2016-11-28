@@ -9,9 +9,9 @@ function warnAboutAmbiguity ( description, ractive ) {
 
 export default class Binding {
 	constructor ( element, name = 'value' ) {
-		this.element = element;
+		this._element = element;
 		this.ractive = element.ractive;
-		this.attribute = element.attributeByName[ name ];
+		this.attribute = element._attributeByName[ name ];
 
 		const interpolator = this.attribute.interpolator;
 		interpolator.twowayBinding = this;
@@ -24,7 +24,7 @@ export default class Binding {
 			interpolator.resolver.forceResolution();
 			model = interpolator.model;
 
-			warnAboutAmbiguity( `'${interpolator.template.r}' reference`, this.ractive );
+			warnAboutAmbiguity( `'${interpolator._template.r}' reference`, this.ractive );
 		}
 
 		else if ( model.isUnresolved ) {
@@ -35,7 +35,7 @@ export default class Binding {
 
 		// TODO include index/key/keypath refs as read-only
 		else if ( model.isReadonly ) {
-			const keypath = model.getKeypath().replace( /^@/, '' );
+			const keypath = model._getKeypath().replace( /^@/, '' );
 			warnOnceIfDebug( `Cannot use two-way binding on <${element.name}> element: ${keypath} is read-only. To suppress this warning use <${element.name} twoway='false'...>`, { ractive: this.ractive });
 			return false;
 		}
@@ -53,7 +53,7 @@ export default class Binding {
 		}
 		this.lastVal( true, value );
 
-		const parentForm = findElement( this.element, false, 'form' );
+		const parentForm = findElement( this._element, false, 'form' );
 		if ( parentForm ) {
 			this.resetValue = value;
 			parentForm.formBindings.push( this );
@@ -64,7 +64,7 @@ export default class Binding {
 		this.model.registerTwowayBinding( this );
 	}
 
-	handleChange () {
+	_handleChange () {
 		const value = this.getValue();
 		if ( this.lastVal() === value ) return;
 
@@ -94,7 +94,7 @@ export default class Binding {
 	}
 
 	render () {
-		this.node = this.element.node;
+		this.node = this._element.node;
 		this.node._ractive.binding = this;
 		this.rendered = true; // TODO is this used anywhere?
 	}

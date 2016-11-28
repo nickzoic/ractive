@@ -13,11 +13,11 @@ const makePrefixSequenceMatcher = function ( symbol, fallthrough ) {
 			return expression;
 		}
 
-		if ( !parser.matchString( symbol ) ) {
+		if ( !parser._matchString( symbol ) ) {
 			return null;
 		}
 
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 
 		expression = readExpression( parser );
 		if ( !expression ) {

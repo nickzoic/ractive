@@ -10,7 +10,7 @@ export default function resolveReference ( fragment, ref ) {
 	if ( ref === '.' ) return fragment.findContext();
 
 	// ancestor references
-	if ( ref[0] === '~' ) return fragment.ractive.viewmodel.joinAll( splitKeypath( ref.slice( 2 ) ) );
+	if ( ref[0] === '~' ) return fragment.ractive._viewmodel.joinAll( splitKeypath( ref.slice( 2 ) ) );
 
 	// scoped references
 	if ( ref[0] === '.' || ref[0] === '^' ) {
@@ -28,7 +28,7 @@ export default function resolveReference ( fragment, ref ) {
 			context = null;
 			while ( frag && !context ) {
 				context = frag.context;
-				frag = frag.parent.component ? frag.parent.component.parentFragment : frag.parent;
+				frag = frag.parent.component ? frag.parent.component._parentFragment : frag.parent;
 			}
 		}
 
@@ -61,7 +61,7 @@ export default function resolveReference ( fragment, ref ) {
 		// shorthand from outside the template
 		// @this referring to local ractive instance
 		if ( base === '@this' || base === '@' ) {
-			return fragment.ractive.viewmodel.getRactiveModel().joinAll( keys );
+			return fragment.ractive._viewmodel.getRactiveModel().joinAll( keys );
 		}
 
 		// @index or @key referring to the nearest repeating index or key
@@ -90,7 +90,7 @@ export default function resolveReference ( fragment, ref ) {
 
 			// skip over component roots, which provide no context
 			while ( root && context.isRoot && context.ractive.component ) {
-				context = context.ractive.component.parentFragment.findContext();
+				context = context.ractive.component._parentFragment.findContext();
 			}
 
 			const match = keypathExpr.exec( ref );
@@ -162,7 +162,7 @@ export default function resolveReference ( fragment, ref ) {
 
 		if ( ( fragment.componentParent || ( !fragment.parent && fragment.ractive.component ) ) && !fragment.ractive.isolated ) {
 			// ascend through component boundary
-			fragment = fragment.componentParent || fragment.ractive.component.parentFragment;
+			fragment = fragment.componentParent || fragment.ractive.component._parentFragment;
 			crossedComponentBoundary = true;
 		} else {
 			fragment = fragment.parent;
@@ -171,7 +171,7 @@ export default function resolveReference ( fragment, ref ) {
 
 	// if enabled, check the instance for a match
 	if ( initialFragment.ractive.resolveInstanceMembers ) {
-		const model = initialFragment.ractive.viewmodel.getRactiveModel();
+		const model = initialFragment.ractive._viewmodel.getRactiveModel();
 		if ( model.has( base ) ) {
 			return model.joinKey( base ).joinAll( keys );
 		}

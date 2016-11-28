@@ -7,10 +7,10 @@ const getDoubleQuotedString = makeQuotedStringMatcher( `'` );
 export default function ( parser ) {
 	const start = parser.pos;
 
-	if ( parser.matchString( '"' ) ) {
+	if ( parser._matchString( '"' ) ) {
 		const string = getDoubleQuotedString( parser );
 
-		if ( !parser.matchString( '"' ) ) {
+		if ( !parser._matchString( '"' ) ) {
 			parser.pos = start;
 			return null;
 		}
@@ -21,10 +21,10 @@ export default function ( parser ) {
 		};
 	}
 
-	if ( parser.matchString( `'` ) ) {
+	if ( parser._matchString( `'` ) ) {
 		const string = getSingleQuotedString( parser );
 
-		if ( !parser.matchString( `'` ) ) {
+		if ( !parser._matchString( `'` ) ) {
 			parser.pos = start;
 			return null;
 		}

@@ -5,7 +5,7 @@ const regexpPattern = /^(\/(?:[^\n\r\u2028\u2029/\\[]|\\.|\[(?:[^\n\r\u2028\u202
 export default function readNumberLiteral ( parser ) {
 	let result;
 
-	if ( result = parser.matchPattern( regexpPattern ) ) {
+	if ( result = parser._matchPattern( regexpPattern ) ) {
 		return {
 			t: REGEXP_LITERAL,
 			v: result

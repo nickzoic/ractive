@@ -16,7 +16,7 @@ export default class KeyModel {
 		return unescapeKey( this.value );
 	}
 
-	getKeypath () {
+	_getKeypath () {
 		return unescapeKey( this.value );
 	}
 

@@ -25,7 +25,7 @@ export default class Computation extends Model {
 		this.dependencies = [];
 
 		this.children = [];
-		this.childByKey = {};
+		this._childByKey = {};
 
 		this.deps = [];
 
@@ -56,7 +56,7 @@ export default class Computation extends Model {
 		try {
 			result = this.signature.getter.call( this.context );
 		} catch ( err ) {
-			warnIfDebug( `Failed to compute ${this.getKeypath()}: ${err.message || err}` );
+			warnIfDebug( `Failed to compute ${this._getKeypath()}: ${err.message || err}` );
 
 			// TODO this is all well and good in Chrome, but...
 			// ...also, should encapsulate this stuff better, and only
@@ -75,19 +75,19 @@ export default class Computation extends Model {
 		// if not the first computation and the value is not the same,
 		// register the change for change events
 		if ( 'value' in this && result !== this.value ) {
-			this.registerChange( this.getKeypath(), result );
+			this.registerChange( this._getKeypath(), result );
 		}
 
 		return result;
 	}
 
 	mark () {
-		this.handleChange();
+		this._handleChange();
 	}
 
 	rebind ( next, previous ) {
 		// computations will grab all of their deps again automagically
-		if ( next !== previous ) this.handleChange();
+		if ( next !== previous ) this._handleChange();
 	}
 
 	set ( value ) {
@@ -129,5 +129,5 @@ export default class Computation extends Model {
 
 const prototype = Computation.prototype;
 const child = ComputationChild.prototype;
-prototype.handleChange = child.handleChange;
+prototype._handleChange = child._handleChange;
 prototype.joinKey = child.joinKey;

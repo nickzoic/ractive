@@ -3,18 +3,18 @@ import { CLOSING } from '../../../../config/types';
 export default function readClosing ( parser, tag ) {
 	const start = parser.pos;
 
-	if ( !parser.matchString( tag.open ) ) {
+	if ( !parser._matchString( tag.open ) ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '/' ) ) {
+	if ( !parser._matchString( '/' ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const remaining = parser.remaining();
 	const index = remaining.indexOf( tag.close );
@@ -27,7 +27,7 @@ export default function readClosing ( parser, tag ) {
 
 		parser.pos += index;
 
-		if ( !parser.matchString( tag.close ) ) {
+		if ( !parser._matchString( tag.close ) ) {
 			parser.error( `Expected closing delimiter '${tag.close}'` );
 		}
 

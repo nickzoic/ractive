@@ -6,14 +6,14 @@ import readExpression from '../../readExpression';
 export default function readRefinement ( parser ) {
 	// some things call for strict refinement (partial names), meaning no space between reference and refinement
 	if ( !parser.strictRefinement ) {
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 	}
 
 	// "." name
-	if ( parser.matchString( '.' ) ) {
-		parser.allowWhitespace();
+	if ( parser._matchString( '.' ) ) {
+		parser._allowWhitespace();
 
-		const name = parser.matchPattern( namePattern );
+		const name = parser._matchPattern( namePattern );
 		if ( name ) {
 			return {
 				t: REFINEMENT,
@@ -25,15 +25,15 @@ export default function readRefinement ( parser ) {
 	}
 
 	// "[" expression "]"
-	if ( parser.matchString( '[' ) ) {
-		parser.allowWhitespace();
+	if ( parser._matchString( '[' ) ) {
+		parser._allowWhitespace();
 
 		const expr = readExpression( parser );
 		if ( !expr ) parser.error( expectedExpression );
 
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 
-		if ( !parser.matchString( ']' ) ) parser.error( `Expected ']'` );
+		if ( !parser._matchString( ']' ) ) parser.error( `Expected ']'` );
 
 		return {
 			t: REFINEMENT,

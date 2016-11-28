@@ -18,9 +18,9 @@ const makeInfixSequenceMatcher = function ( symbol, fallthrough ) {
 		while ( true ) {
 			start = parser.pos;
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 
-			if ( !parser.matchString( symbol ) ) {
+			if ( !parser._matchString( symbol ) ) {
 				parser.pos = start;
 				return left;
 			}
@@ -31,7 +31,7 @@ const makeInfixSequenceMatcher = function ( symbol, fallthrough ) {
 				return left;
 			}
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 
 			// right operand must also consist of only higher-precedence operators
 			right = fallthrough( parser );

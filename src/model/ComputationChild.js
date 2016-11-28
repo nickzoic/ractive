@@ -38,7 +38,7 @@ export default class ComputationChild extends Model {
 		return this.value;
 	}
 
-	handleChange () {
+	_handleChange () {
 		this.dirty = true;
 
 		if ( this.boundValue ) this.boundValue = null;
@@ -52,12 +52,12 @@ export default class ComputationChild extends Model {
 	joinKey ( key ) {
 		if ( key === undefined || key === '' ) return this;
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !this._childByKey.hasOwnProperty( key ) ) {
 			const child = new ComputationChild( this, key );
 			this.children.push( child );
-			this.childByKey[ key ] = child;
+			this._childByKey[ key ] = child;
 		}
 
-		return this.childByKey[ key ];
+		return this._childByKey[ key ];
 	}
 }

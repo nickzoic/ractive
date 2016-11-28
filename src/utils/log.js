@@ -68,7 +68,7 @@ Found a bug? Raise an issue:
 				}
 
 				let node;
-				if ( node = ( options.node || ( ractive.fragment && ractive.fragment.rendered && ractive.find( '*' ) ) ) ) {
+				if ( node = ( options.node || ( ractive._fragment && ractive._fragment.rendered && ractive.find( '*' ) ) ) ) {
 					args.push( node );
 				}
 			}

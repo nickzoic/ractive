@@ -116,7 +116,7 @@ function detachImmediate ( manager ) {
 		node = queue[i].node;
 		j = outros.length;
 		while ( j-- ) {
-			trans = outros[j].element.node;
+			trans = outros[j]._element.node;
 			// check to see if the node is, contains, or is contained by the transitioning node
 			if ( trans === node || trans.contains( node ) || node.contains( trans ) ) continue start;
 		}

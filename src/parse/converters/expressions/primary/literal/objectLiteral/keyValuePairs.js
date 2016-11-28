@@ -10,7 +10,7 @@ export default function readKeyValuePairs ( parser ) {
 
 	const pairs = [ pair ];
 
-	if ( parser.matchString( ',' ) ) {
+	if ( parser._matchString( ',' ) ) {
 		const keyValuePairs = readKeyValuePairs( parser );
 
 		if ( !keyValuePairs ) {

@@ -11,11 +11,11 @@ const configHook = new Hook( 'config' );
 const initHook = new HookQueue( 'init' );
 
 export default function initialise ( ractive, userOptions, options ) {
-	Object.keys( ractive.viewmodel.computations ).forEach( key => {
-		const computation = ractive.viewmodel.computations[ key ];
+	Object.keys( ractive._viewmodel.computations ).forEach( key => {
+		const computation = ractive._viewmodel.computations[ key ];
 
-		if ( ractive.viewmodel.value.hasOwnProperty( key ) ) {
-			computation.set( ractive.viewmodel.value[ key ] );
+		if ( ractive._viewmodel.value.hasOwnProperty( key ) ) {
+			computation.set( ractive._viewmodel.value[ key ] );
 		}
 	});
 
@@ -32,8 +32,8 @@ export default function initialise ( ractive, userOptions, options ) {
 
 	initHook.begin( ractive );
 
-	const fragment = ractive.fragment = createFragment( ractive, options );
-	if ( fragment ) fragment.bind( ractive.viewmodel );
+	const fragment = ractive._fragment = createFragment( ractive, options );
+	if ( fragment ) fragment.bind( ractive._viewmodel );
 
 	initHook.end( ractive );
 
@@ -70,7 +70,7 @@ export function createFragment ( ractive, options = {} ) {
 
 		return new Fragment({
 			owner: ractive,
-			template: ractive.template,
+			_template: ractive.template,
 			cssIds
 		});
 	}

@@ -17,16 +17,16 @@ export default function Ractive$teardown () {
 	}
 
 	this.shouldDestroy = true;
-	return teardown( this, () => this.fragment.rendered ? this.unrender() : Promise.resolve() );
+	return teardown( this, () => this._fragment.rendered ? this.unrender() : Promise.resolve() );
 }
 
 export function teardown ( instance, getPromise ) {
 	instance.torndown = true;
-	instance.viewmodel.teardown();
-	instance.fragment.unbind();
+	instance._viewmodel.teardown();
+	instance._fragment.unbind();
 	instance._observers.slice().forEach( cancel );
 
-	if ( instance.fragment.rendered && instance.el.__ractive_instances__ ) {
+	if ( instance._fragment.rendered && instance.el.__ractive_instances__ ) {
 		removeFromArray( instance.el.__ractive_instances__, instance );
 	}
 

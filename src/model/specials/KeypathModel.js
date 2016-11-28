@@ -6,7 +6,7 @@ export default class KeypathModel {
 	constructor ( parent, ractive ) {
 		this.parent = parent;
 		this.ractive = ractive;
-		this.value = ractive ? parent.getKeypath( ractive ) : parent.getKeypath();
+		this.value = ractive ? parent._getKeypath( ractive ) : parent._getKeypath();
 		this.deps = [];
 		this.children = {};
 		this.isReadonly = this.isKeypath = true;
@@ -26,15 +26,15 @@ export default class KeypathModel {
 		return this.children[ ractive._guid ];
 	}
 
-	getKeypath () {
+	_getKeypath () {
 		return this.value;
 	}
 
-	handleChange () {
+	_handleChange () {
 		const keys = Object.keys( this.children );
 		let i = keys.length;
 		while ( i-- ) {
-			this.children[ keys[i] ].handleChange();
+			this.children[ keys[i] ]._handleChange();
 		}
 
 		this.deps.forEach( handleChange );
@@ -45,8 +45,8 @@ export default class KeypathModel {
 		let i = keys.length;
 		while ( i-- ) {
 			const child = this.children[keys[i]];
-			child.value = next.getKeypath( child.ractive );
-			child.handleChange();
+			child.value = next._getKeypath( child.ractive );
+			child._handleChange();
 		}
 	}
 

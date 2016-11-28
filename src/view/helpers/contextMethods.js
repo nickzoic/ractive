@@ -39,20 +39,20 @@ function build ( el, keypath, value ) {
 
 // get relative keypaths and values
 function get ( keypath ) {
-	if ( !keypath ) return this._element.parentFragment.findContext().get( true );
+	if ( !keypath ) return this._element._parentFragment.findContext().get( true );
 
-	const model = resolveReference( this._element.parentFragment, keypath );
+	const model = resolveReference( this._element._parentFragment, keypath );
 
 	return model ? model.get( true ) : undefined;
 }
 
 function resolve ( path, ractive ) {
 	const { model, instance } = findModel( this, path );
-	return model ? model.getKeypath( ractive || instance ) : path;
+	return model ? model._getKeypath( ractive || instance ) : path;
 }
 
 function findModel ( el, path ) {
-	const frag = el._element.parentFragment;
+	const frag = el._element._parentFragment;
 
 	if ( typeof path !== 'string' ) {
 		return { model: frag.findContext(), instance: path };
@@ -93,13 +93,13 @@ function merge ( keypath, array, options ) {
 
 function observe ( keypath, callback, options = {} ) {
 	if ( isObject( keypath ) ) options = callback || {};
-	options.fragment = this._element.parentFragment;
+	options._fragment = this._element._parentFragment;
 	return this.ractive.observe( keypath, callback, options );
 }
 
 function observeOnce ( keypath, callback, options = {} ) {
 	if ( isObject( keypath ) ) options = callback || {};
-	options.fragment = this._element.parentFragment;
+	options._fragment = this._element._parentFragment;
 	return this.ractive.observeOnce( keypath, callback, options );
 }
 
@@ -118,7 +118,7 @@ function raise ( name, event, ...args ) {
 		const events = element.events;
 		for ( let i = 0; i < events.length; i++ ) {
 			const event = events[i];
-			if ( ~event.template.n.indexOf( name ) ) {
+			if ( ~event._template.n.indexOf( name ) ) {
 				event.fire( event, args );
 				return;
 			}
@@ -197,7 +197,7 @@ function isBound () {
 
 function getBindingPath ( ractive ) {
 	const { model, instance } = getBindingModel( this );
-	if ( model ) return model.getKeypath( ractive || instance );
+	if ( model ) return model._getKeypath( ractive || instance );
 }
 
 function getBinding () {
@@ -207,7 +207,7 @@ function getBinding () {
 
 function getBindingModel ( ctx ) {
 	const el = ctx._element;
-	return { model: el.binding && el.binding.model, instance: el.parentFragment.ractive };
+	return { model: el.binding && el.binding.model, instance: el._parentFragment.ractive };
 }
 
 function setBinding ( value ) {
@@ -218,7 +218,7 @@ function setBinding ( value ) {
 export function addHelpers ( obj, element ) {
 	defineProperties( obj, {
 		_element: { value: element },
-		ractive: { value: element.parentFragment.ractive },
+		ractive: { value: element._parentFragment.ractive },
 		resolve: { value: resolve },
 		get: { value: get },
 

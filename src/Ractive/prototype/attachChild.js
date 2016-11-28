@@ -17,7 +17,7 @@ export default function attachChild ( child, options = {} ) {
 		instance: child,
 		ractive: this,
 		name: options.name || child.constructor.name || 'Ractive',
-		liveQueries: [],
+		__liveQueries: [],
 		target: options.target || false,
 		bubble,
 		findNextNode,
@@ -27,7 +27,7 @@ export default function attachChild ( child, options = {} ) {
 
 	// child is managing itself
 	if ( !meta.target ) {
-		meta.parentFragment = this.fragment;
+		meta._parentFragment = this._fragment;
 		meta.external = true;
 	} else {
 		let list;
@@ -55,8 +55,8 @@ export default function attachChild ( child, options = {} ) {
 		this.merge( `@this.children.byName.${meta.target}` );
 		updateAnchors( this, meta.target );
 	} else {
-		if ( !child.isolated ) child.viewmodel.attached( this.fragment );
-		if ( child.fragment.rendered ) {
+		if ( !child.isolated ) child._viewmodel.attached( this._fragment );
+		if ( child._fragment.rendered ) {
 			child.findAll( '*' ).forEach( el => updateLiveQueries( el._ractive.proxy ) );
 			child.findAllComponents().forEach( cmp => updateLiveComponentQueries( cmp.component ) );
 			updateLiveComponentQueries( meta );
@@ -69,11 +69,11 @@ export default function attachChild ( child, options = {} ) {
 	return promise.then( () => child );
 }
 
-function bubble () { runloop.addFragment( this.instance.fragment ); }
+function bubble () { runloop.addFragment( this.instance._fragment ); }
 
 function removeFromQuery ( query ) {
 	query.remove( this.instance );
-	removeFromArray( this.liveQueries, query );
+	removeFromArray( this.__liveQueries, query );
 }
 
 function findNextNode () {

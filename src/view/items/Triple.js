@@ -66,7 +66,7 @@ export default class Triple extends Mustache {
 
 	render ( target ) {
 		const html = this.model ? this.model.get() : '';
-		this.nodes = insertHtml( html, this.parentFragment.findParentNode(), target );
+		this.nodes = insertHtml( html, this._parentFragment.findParentNode(), target );
 		this.rendered = true;
 	}
 
@@ -87,8 +87,8 @@ export default class Triple extends Mustache {
 			const docFrag = createDocumentFragment();
 			this.render( docFrag );
 
-			const parentNode = this.parentFragment.findParentNode();
-			const anchor = this.parentFragment.findNextNode( this );
+			const parentNode = this._parentFragment.findParentNode();
+			const anchor = this._parentFragment.findNextNode( this );
 
 			parentNode.insertBefore( docFrag, anchor );
 		} else {

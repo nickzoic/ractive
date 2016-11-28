@@ -5,7 +5,7 @@ import runloop from '../../global/runloop';
 
 export default class ReferenceResolver {
 	constructor ( fragment, reference, callback ) {
-		this.fragment = fragment;
+		this._fragment = fragment;
 		this.reference = normalise( reference );
 		this.callback = callback;
 
@@ -31,7 +31,7 @@ export default class ReferenceResolver {
 	attemptResolution () {
 		if ( this.resolved ) return;
 
-		const model = resolveReference( this.fragment, this.reference );
+		const model = resolveReference( this._fragment, this.reference );
 
 		if ( model ) {
 			this.resolved = true;
@@ -42,7 +42,7 @@ export default class ReferenceResolver {
 	forceResolution () {
 		if ( this.resolved ) return;
 
-		const model = this.fragment.findContext().joinAll( this.keys );
+		const model = this._fragment.findContext().joinAll( this.keys );
 		this.callback( model );
 		this.resolved = true;
 	}
@@ -53,7 +53,7 @@ export default class ReferenceResolver {
 	}
 
 	unbind () {
-		if ( this.fragment ) removeFromArray( this.fragment.unresolved, this );
+		if ( this._fragment ) removeFromArray( this._fragment.unresolved, this );
 
 		if ( this.resolved ) return;
 

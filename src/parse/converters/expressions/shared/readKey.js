@@ -17,7 +17,7 @@ export default function readKey ( parser ) {
 		return token.v;
 	}
 
-	if ( token = parser.matchPattern( namePattern ) ) {
+	if ( token = parser._matchPattern( namePattern ) ) {
 		return token;
 	}
 

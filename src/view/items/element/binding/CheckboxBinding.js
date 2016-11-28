@@ -22,7 +22,7 @@ export default class CheckboxBinding extends Binding {
 	}
 
 	getInitialValue () {
-		return !!this.element.getAttribute( 'checked' );
+		return !!this._element.getAttribute( 'checked' );
 	}
 
 	getValue () {

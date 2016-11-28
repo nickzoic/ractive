@@ -1,7 +1,7 @@
 import { COMMENT } from '../../../config/types';
 
 export default function readComment ( parser, tag ) {
-	if ( !parser.matchString( '!' ) ) {
+	if ( !parser._matchString( '!' ) ) {
 		return null;
 	}
 

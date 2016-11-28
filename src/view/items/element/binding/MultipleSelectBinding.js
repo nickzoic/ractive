@@ -5,13 +5,13 @@ import getSelectedOptions from '../../../../utils/getSelectedOptions';
 
 export default class MultipleSelectBinding extends Binding {
 	getInitialValue () {
-		return this.element.options
+		return this._element.options
 			.filter( option => option.getAttribute( 'selected' ) )
 			.map( option => option.getAttribute( 'value' ) );
 	}
 
 	getValue () {
-		const options = this.element.node.options;
+		const options = this._element.node.options;
 		const len = options.length;
 
 		const selectedValues = [];
@@ -28,14 +28,14 @@ export default class MultipleSelectBinding extends Binding {
 		return selectedValues;
 	}
 
-	handleChange () {
+	_handleChange () {
 		const attribute = this.attribute;
 		const previousValue = attribute.getValue();
 
 		const value = this.getValue();
 
 		if ( previousValue === undefined || !arrayContentsMatch( value, previousValue ) ) {
-			super.handleChange();
+			super._handleChange();
 		}
 
 		return this;
@@ -48,7 +48,7 @@ export default class MultipleSelectBinding extends Binding {
 
 		if ( this.model.get() === undefined ) {
 			// get value from DOM, if possible
-			this.handleChange();
+			this._handleChange();
 		}
 	}
 

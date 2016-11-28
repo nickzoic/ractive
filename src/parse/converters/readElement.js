@@ -41,7 +41,7 @@ function readElement ( parser ) {
 		return null;
 	}
 
-	if ( !parser.matchString( '<' ) ) {
+	if ( !parser._matchString( '<' ) ) {
 		return null;
 	}
 
@@ -56,27 +56,27 @@ function readElement ( parser ) {
 	}
 
 	// check for doctype decl
-	if ( parser.matchString( '!' ) ) {
+	if ( parser._matchString( '!' ) ) {
 		element.t = DOCTYPE;
-		if ( !parser.matchPattern( /^doctype/i ) ) {
+		if ( !parser._matchPattern( /^doctype/i ) ) {
 			parser.error( 'Expected DOCTYPE declaration' );
 		}
 
-		element.a = parser.matchPattern( /^(.+?)>/ );
+		element.a = parser._matchPattern( /^(.+?)>/ );
 		return element;
 	}
 	// check for anchor
-	else if ( anchor = parser.matchString( '#' ) ) {
-		parser.allowWhitespace();
+	else if ( anchor = parser._matchString( '#' ) ) {
+		parser._allowWhitespace();
 		element.t = ANCHOR;
-		element.n = parser.matchPattern( relaxedName );
+		element.n = parser._matchPattern( relaxedName );
 	}
 	// otherwise, it's an element/component
 	else {
 		element.t = ELEMENT;
 
 		// element name
-		element.e = parser.matchPattern( tagNamePattern );
+		element.e = parser._matchPattern( tagNamePattern );
 		if ( !element.e ) {
 			return null;
 		}
@@ -87,7 +87,7 @@ function readElement ( parser ) {
 		parser.error( 'Illegal tag name' );
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	parser.inTag = true;
 
@@ -98,21 +98,21 @@ function readElement ( parser ) {
 			element.m.push( attribute );
 		}
 
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 	}
 
 	parser.inTag = false;
 
 	// allow whitespace before closing solidus
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	// self-closing solidus?
-	if ( parser.matchString( '/' ) ) {
+	if ( parser._matchString( '/' ) ) {
 		selfClosing = true;
 	}
 
 	// closing angle bracket
-	if ( !parser.matchString( '>' ) ) {
+	if ( !parser._matchString( '>' ) ) {
 		return null;
 	}
 
@@ -243,21 +243,21 @@ function canContain ( name, remaining ) {
 
 function readAnchorClose ( parser, name ) {
 	const pos = parser.pos;
-	if ( !parser.matchString( '</' ) ) {
+	if ( !parser._matchString( '</' ) ) {
 		return null;
 	}
 
-	parser.matchString( '#' );
-	parser.allowWhitespace();
+	parser._matchString( '#' );
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( name ) ) {
+	if ( !parser._matchString( name ) ) {
 		parser.pos = pos;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '>' ) ) {
+	if ( !parser._matchString( '>' ) ) {
 		parser.pos = pos;
 		return null;
 	}

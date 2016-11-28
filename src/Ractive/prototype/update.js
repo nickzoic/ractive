@@ -14,7 +14,7 @@ export function update ( ractive, model ) {
 	const promise = runloop.start( ractive, true );
 
 	model.mark();
-	model.registerChange( model.getKeypath(), model.get() );
+	model.registerChange( model._getKeypath(), model.get() );
 
 	if ( !model.isRoot ) {
 		// there may be unresolved refs that are now resolvable up the context tree
@@ -40,5 +40,5 @@ export function update ( ractive, model ) {
 export default function Ractive$update ( keypath ) {
 	if ( keypath ) keypath = splitKeypath( keypath );
 
-	return update( this, keypath ? this.viewmodel.joinAll( keypath ) : this.viewmodel );
+	return update( this, keypath ? this._viewmodel.joinAll( keypath ) : this._viewmodel );
 }

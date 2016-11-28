@@ -50,18 +50,18 @@ const specialElements = {
 };
 
 export default function createItem ( options ) {
-	if ( typeof options.template === 'string' ) {
+	if ( typeof options._template === 'string' ) {
 		return new Text( options );
 	}
 
-	if ( options.template.t === ELEMENT ) {
+	if ( options._template.t === ELEMENT ) {
 		// could be component or element
-		const ComponentConstructor = getComponentConstructor( options.parentFragment.ractive, options.template.e );
+		const ComponentConstructor = getComponentConstructor( options._parentFragment.ractive, options._template.e );
 		if ( ComponentConstructor ) {
 			return new Component( options, ComponentConstructor );
 		}
 
-		const tagName = options.template.e.toLowerCase();
+		const tagName = options._template.e.toLowerCase();
 
 		const ElementConstructor = specialElements[ tagName ] || Element;
 		return new ElementConstructor( options );
@@ -70,19 +70,19 @@ export default function createItem ( options ) {
 	let Item;
 
 	// component mappings are a special case of attribute
-	if ( options.template.t === ATTRIBUTE ) {
+	if ( options._template.t === ATTRIBUTE ) {
 		let el = options.owner;
 		if ( !el || ( el.type !== ANCHOR && el.type !== COMPONENT && el.type !== ELEMENT ) ) {
-			el = findElement( options.parentFragment );
+			el = findElement( options._parentFragment );
 		}
-		options.element = el;
+		options._element = el;
 
 		Item = el.type === COMPONENT || el.type === ANCHOR ? Mapping : Attribute;
 	} else {
-		Item = constructors[ options.template.t ];
+		Item = constructors[ options._template.t ];
 	}
 
-	if ( !Item ) throw new Error( `Unrecognised item type ${options.template.t}` );
+	if ( !Item ) throw new Error( `Unrecognised item type ${options._template.t}` );
 
 	return new Item( options );
 }

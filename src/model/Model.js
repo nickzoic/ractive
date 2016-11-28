@@ -41,7 +41,7 @@ export default class Model extends ModelBase {
 
 		// TODO remove this legacy nonsense
 		const ractive = this.root.ractive;
-		const keypath = this.getKeypath();
+		const keypath = this._getKeypath();
 
 		// tear previous adaptor down if present
 		if ( this.wrapper ) {
@@ -112,7 +112,7 @@ export default class Model extends ModelBase {
 		if ( this.boundValue ) this.boundValue = null;
 
 		// TODO deprecate this nonsense
-		this.registerChange( this.getKeypath(), value );
+		this.registerChange( this._getKeypath(), value );
 
 		if ( this.parent.wrapper && this.parent.wrapper.set ) {
 			this.parent.wrapper.set( this.key, value );
@@ -129,7 +129,7 @@ export default class Model extends ModelBase {
 			if ( isObjectLike( parentValue ) ) {
 				parentValue[ this.key ] = value;
 			} else {
-				warnIfDebug( `Attempted to set a property of a non-object '${this.getKeypath()}'` );
+				warnIfDebug( `Attempted to set a property of a non-object '${this._getKeypath()}'` );
 				return;
 			}
 
@@ -182,14 +182,14 @@ export default class Model extends ModelBase {
 		if ( key === undefined || key === '' ) return this;
 
 
-		if ( !this.childByKey.hasOwnProperty( key ) ) {
+		if ( !this._childByKey.hasOwnProperty( key ) ) {
 			const child = new Model( this, key );
 			this.children.push( child );
-			this.childByKey[ key ] = child;
+			this._childByKey[ key ] = child;
 		}
 
-		if ( this.childByKey[ key ]._link && ( !opts || opts.lastLink !== false ) ) return this.childByKey[ key ]._link;
-		return this.childByKey[ key ];
+		if ( this._childByKey[ key ]._link && ( !opts || opts.lastLink !== false ) ) return this._childByKey[ key ]._link;
+		return this._childByKey[ key ];
 	}
 
 	mark () {
@@ -288,7 +288,7 @@ function recreateArray( model ) {
 	const array = [];
 
 	for ( let i = 0; i < model.length; i++ ) {
-		array[ i ] = (model.childByKey[i] || {}).value;
+		array[ i ] = (model._childByKey[i] || {}).value;
 	}
 
 	return array;

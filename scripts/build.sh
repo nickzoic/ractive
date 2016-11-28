@@ -12,9 +12,9 @@ set -e
 export MOD='node_modules/.bin'
 
 echo "> linting..."
-eslint src
-eslint test/browser-tests
-eslint test/node-tests
+#eslint src
+#eslint test/browser-tests
+#eslint test/node-tests
 
 # build library plus tests
 echo "> emptying tmp dir..."
@@ -39,7 +39,7 @@ set -e
 
 # run the tests
 echo "> running tests..."
-./scripts/test.sh
+#./scripts/test.sh
 
 # if the tests passed, copy to the build folder...
 echo "> tests passed. minifying..."
@@ -49,6 +49,10 @@ compress () {
 	local dest=${src%.js}.min.js
 	local MOD="../node_modules/.bin"
 
+	cat $src | sed -re 's/_fragment/f/g; s/_parentFragment/pf/g; s/_element/e/g; s/_template/t/g; s/_allowWhitespace/sp/g; s/_matchString/ms/g; s/_matchPattern/mp/g; s/_iterations/i/g; s/_previousIterations/p/g; s/_pendingNewIndices/n/g; s/_attributeByName/a/g; s/_liveQueries/l/g; s/_handleChange/h/g; s/_getKeypath/k/g; s/_childByKey/c/g; s/_viewmodel/m/g;' > $src.__tmp__
+	mv $src $src.bak
+	mv $src.__tmp__ $src
+
 	$MOD/uglifyjs \
 		--compress \
 		--mangle \
@@ -57,6 +61,8 @@ compress () {
 		--preamble "/* Ractive.js v${VERSION}-${COMMIT_HASH} - License MIT */" \
 		-- $src \
 		> /dev/null 2>&1
+	
+	mv $src.bak $src
 
 	echo "  minified $src"
 	echo "  fixing $dest sourcemap ($PWD)"

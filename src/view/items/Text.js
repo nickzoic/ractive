@@ -28,11 +28,11 @@ export default class Text extends Item {
 			let n = occupants[0];
 			if ( n && n.nodeType === 3 ) {
 				occupants.shift();
-				if ( n.nodeValue !== this.template ) {
-					n.nodeValue = this.template;
+				if ( n.nodeValue !== this._template ) {
+					n.nodeValue = this._template;
 				}
 			} else {
-				n = this.node = doc.createTextNode( this.template );
+				n = this.node = doc.createTextNode( this._template );
 				if ( occupants[0] ) {
 					target.insertBefore( n, occupants[0] );
 				} else {
@@ -42,13 +42,13 @@ export default class Text extends Item {
 
 			this.node = n;
 		} else {
-			this.node = doc.createTextNode( this.template );
+			this.node = doc.createTextNode( this._template );
 			target.appendChild( this.node );
 		}
 	}
 
 	toString ( escape ) {
-		return escape ? escapeHtml( this.template ) : this.template;
+		return escape ? escapeHtml( this._template ) : this._template;
 	}
 
 	unrender ( shouldDestroy ) {
@@ -57,7 +57,7 @@ export default class Text extends Item {
 	}
 
 	valueOf () {
-		return this.template;
+		return this._template;
 	}
 }
 

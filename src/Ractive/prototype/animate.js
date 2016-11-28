@@ -67,5 +67,5 @@ ${keys.map( key => `ractive.animate('${key}', ${keypath[ key ]}, {...});` ).join
 	}
 
 
-	return animate( this, this.viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
+	return animate( this, this._viewmodel.joinAll( splitKeypath( keypath ) ), to, options );
 }

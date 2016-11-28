@@ -32,7 +32,7 @@ export function gather ( ractive, keypath, base ) {
 		return [];
 	}
 
-	const model = base || ractive.viewmodel;
+	const model = base || ractive._viewmodel;
 	if ( star.test( keypath ) ) {
 		return model.findMatches( splitKeypath( keypath ) );
 	} else {

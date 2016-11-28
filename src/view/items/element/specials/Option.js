@@ -5,7 +5,7 @@ import findElement from '../../shared/findElement';
 
 export default class Option extends Element {
 	constructor ( options ) {
-		const template = options.template;
+		const template = options._template;
 		if ( !template.a ) template.a = {};
 
 		// If the value attribute is missing, use the element's content,
@@ -16,7 +16,7 @@ export default class Option extends Element {
 
 		super( options );
 
-		this.select = findElement( this.parent || this.parentFragment, false, 'select' );
+		this.select = findElement( this.parent || this._parentFragment, false, 'select' );
 	}
 
 	bind () {
@@ -27,11 +27,11 @@ export default class Option extends Element {
 
 		// If the select has a value, it overrides the `selected` attribute on
 		// this option - so we delete the attribute
-		const selectedAttribute = this.attributeByName.selected;
+		const selectedAttribute = this._attributeByName.selected;
 		if ( selectedAttribute && this.select.getAttribute( 'value' ) !== undefined ) {
 			const index = this.attributes.indexOf( selectedAttribute );
 			this.attributes.splice( index, 1 );
-			delete this.attributeByName.selected;
+			delete this._attributeByName.selected;
 		}
 
 		super.bind();
@@ -48,8 +48,8 @@ export default class Option extends Element {
 	}
 
 	getAttribute ( name ) {
-		const attribute = this.attributeByName[ name ];
-		return attribute ? attribute.getValue() : name === 'value' && this.fragment ? this.fragment.valueOf() : undefined;
+		const attribute = this._attributeByName[ name ];
+		return attribute ? attribute.getValue() : name === 'value' && this._fragment ? this._fragment.valueOf() : undefined;
 	}
 
 	isSelected () {
@@ -78,7 +78,7 @@ export default class Option extends Element {
 	render ( target, occupants ) {
 		super.render( target, occupants );
 
-		if ( !this.attributeByName.value ) {
+		if ( !this._attributeByName.value ) {
 			this.node._ractive.value = this.getAttribute( 'value' );
 		}
 	}

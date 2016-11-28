@@ -17,9 +17,9 @@ export default function readReference ( parser ) {
 
 	const startPos = parser.pos;
 
-	prefix = parser.matchPattern( prefixPattern ) || '';
-	name = ( !prefix && parser.relaxedNames && parser.matchPattern( relaxedName ) ) ||
-			parser.matchPattern( legalReference );
+	prefix = parser._matchPattern( prefixPattern ) || '';
+	name = ( !prefix && parser.relaxedNames && parser._matchPattern( relaxedName ) ) ||
+			parser._matchPattern( legalReference );
 	const actual = prefix.length + ( ( name && name.length ) || 0 );
 
 	if ( prefix === '@.' ) {
@@ -39,13 +39,13 @@ export default function readReference ( parser ) {
 
 	if ( prefix === '@' ) {
 		if ( name === 'keypath' || name === 'rootpath' ) {
-			if ( parser.matchPattern( specialCall ) ) {
+			if ( parser._matchPattern( specialCall ) ) {
 				const ref = readReference( parser );
 				if ( !ref ) parser.error( `Expected a valid reference for a keypath expression` );
 
-				parser.allowWhitespace();
+				parser._allowWhitespace();
 
-				if ( !parser.matchString( ')' ) ) parser.error( `Unclosed keypath expression` );
+				if ( !parser._matchString( ')' ) ) parser.error( `Unclosed keypath expression` );
 				name += `(${ref.n})`;
 			}
 		} else if ( !specials.test( name ) ) {
@@ -72,7 +72,7 @@ export default function readReference ( parser ) {
 
 	reference = ( prefix || '' ) + normalise( name );
 
-	if ( parser.matchString( '(' ) ) {
+	if ( parser._matchString( '(' ) ) {
 		// if this is a method invocation (as opposed to a function) we need
 		// to strip the method name from the reference combo, else the context
 		// will be wrong

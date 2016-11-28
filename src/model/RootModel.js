@@ -46,7 +46,7 @@ export default class RootModel extends Model {
 		let model = this;
 		while ( keys.length ) {
 			const key = keys.shift();
-			model = this.childByKey[ key ] || this.joinKey( key );
+			model = this._childByKey[ key ] || this.joinKey( key );
 		}
 
 		return model.link( target, targetPath, options );
@@ -73,7 +73,7 @@ export default class RootModel extends Model {
 		}
 	}
 
-	getKeypath () {
+	_getKeypath () {
 		return '';
 	}
 
@@ -108,7 +108,7 @@ export default class RootModel extends Model {
 		if ( hasProp.call( value, key ) ) return true;
 
 		// mappings/links and computations
-		if ( key in this.computations || this.childByKey[key] && this.childByKey[key]._link ) return true;
+		if ( key in this.computations || this._childByKey[key] && this._childByKey[key]._link ) return true;
 
 		// We climb up the constructor chain to find if one of them contains the key
 		let constructor = value.constructor;
@@ -190,13 +190,13 @@ function attachImplicits ( model, fragment ) {
 	}
 
 	// look for virtual children to relink and cascade
-	for ( const k in model.childByKey ) {
+	for ( const k in model._childByKey ) {
 		if ( k in model.value ) {
-			attachImplicits( model.childByKey[k], fragment );
-		} else if ( !model.childByKey[k]._link || model.childByKey[k]._link.isDetached() ) {
+			attachImplicits( model._childByKey[k], fragment );
+		} else if ( !model._childByKey[k]._link || model._childByKey[k]._link.isDetached() ) {
 			const mdl = resolveReference( fragment, k );
 			if ( mdl ) {
-				model.childByKey[k].link( mdl, k, { implicit: true } );
+				model._childByKey[k].link( mdl, k, { implicit: true } );
 			}
 		}
 	}
@@ -207,7 +207,7 @@ function detachImplicits ( model ) {
 		model.unlink();
 	}
 
-	for ( const k in model.childByKey ) {
-		detachImplicits( model.childByKey[k] );
+	for ( const k in model._childByKey ) {
+		detachImplicits( model._childByKey[k] );
 	}
 }

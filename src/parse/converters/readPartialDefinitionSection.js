@@ -11,23 +11,23 @@ export default function readPartialDefinitionSection ( parser ) {
 
 	const delimiters = parser.standardDelimiters;
 
-	if ( !parser.matchString( delimiters[0] ) ) {
+	if ( !parser._matchString( delimiters[0] ) ) {
 		return null;
 	}
 
-	if ( !parser.matchPattern( partialDefinitionSectionPattern ) ) {
+	if ( !parser._matchPattern( partialDefinitionSectionPattern ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	const name = parser.matchPattern( /^[a-zA-Z_$][a-zA-Z_$0-9\-\/]*/ );
+	const name = parser._matchPattern( /^[a-zA-Z_$][a-zA-Z_$0-9\-\/]*/ );
 
 	if ( !name ) {
 		parser.error( 'expected legal partial name' );
 	}
 
-	parser.allowWhitespace();
-	if ( !parser.matchString( delimiters[1] ) ) {
+	parser._allowWhitespace();
+	if ( !parser._matchString( delimiters[1] ) ) {
 		parser.error( `Expected closing delimiter '${delimiters[1]}'` );
 	}
 

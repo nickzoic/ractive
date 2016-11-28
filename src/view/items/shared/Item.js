@@ -3,12 +3,12 @@ import noop from '../../../utils/noop';
 
 export default class Item {
 	constructor ( options ) {
-		this.parentFragment = options.parentFragment;
-		this.ractive = options.parentFragment.ractive;
+		this._parentFragment = options._parentFragment;
+		this.ractive = options._parentFragment.ractive;
 
-		this.template = options.template;
+		this._template = options._template;
 		this.index = options.index;
-		this.type = options.template.t;
+		this.type = options._template.t;
 
 		this.dirty = false;
 	}
@@ -16,12 +16,12 @@ export default class Item {
 	bubble () {
 		if ( !this.dirty ) {
 			this.dirty = true;
-			this.parentFragment.bubble();
+			this._parentFragment.bubble();
 		}
 	}
 
 	destroyed () {
-		if ( this.fragment ) this.fragment.destroyed();
+		if ( this._fragment ) this._fragment.destroyed();
 	}
 
 	find () {
@@ -33,11 +33,11 @@ export default class Item {
 	}
 
 	findNextNode () {
-		return this.parentFragment.findNextNode( this );
+		return this._parentFragment.findNextNode( this );
 	}
 
 	shuffled () {
-		if ( this.fragment ) this.fragment.shuffled();
+		if ( this._fragment ) this._fragment.shuffled();
 	}
 
 	valueOf () {
@@ -54,38 +54,38 @@ export class ContainerItem extends Item {
 	}
 
 	detach () {
-		return this.fragment ? this.fragment.detach() : createDocumentFragment();
+		return this._fragment ? this._fragment.detach() : createDocumentFragment();
 	}
 
 	find ( selector ) {
-		if ( this.fragment ) {
-			return this.fragment.find( selector );
+		if ( this._fragment ) {
+			return this._fragment.find( selector );
 		}
 	}
 
 	findAll ( selector, query ) {
-		if ( this.fragment ) {
-			this.fragment.findAll( selector, query );
+		if ( this._fragment ) {
+			this._fragment.findAll( selector, query );
 		}
 	}
 
 	findComponent ( name ) {
-		if ( this.fragment ) {
-			return this.fragment.findComponent( name );
+		if ( this._fragment ) {
+			return this._fragment.findComponent( name );
 		}
 	}
 
 	findAllComponents ( name, query ) {
-		if ( this.fragment ) {
-			this.fragment.findAllComponents( name, query );
+		if ( this._fragment ) {
+			this._fragment.findAllComponents( name, query );
 		}
 	}
 
 	firstNode ( skipParent ) {
-		return this.fragment && this.fragment.firstNode( skipParent );
+		return this._fragment && this._fragment.firstNode( skipParent );
 	}
 
 	toString ( escape ) {
-		return this.fragment ? this.fragment.toString( escape ) : '';
+		return this._fragment ? this._fragment.toString( escape ) : '';
 	}
 }

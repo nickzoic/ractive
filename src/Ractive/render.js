@@ -15,13 +15,13 @@ export default function render ( ractive, target, anchor, occupants ) {
 	const promise = runloop.start( ractive, true );
 	runloop.scheduleTask( () => renderHook.fire( ractive ), true );
 
-	if ( ractive.fragment.rendered ) {
+	if ( ractive._fragment.rendered ) {
 		throw new Error( 'You cannot call ractive.render() on an already rendered instance! Call ractive.unrender() first' );
 	}
 
 	if ( ractive.destroyed ) {
 		ractive.destroyed = false;
-		ractive.fragment = createFragment( ractive ).bind( ractive.viewmodel );
+		ractive._fragment = createFragment( ractive ).bind( ractive._viewmodel );
 	}
 
 	anchor = getElement( anchor ) || ractive.anchor;
@@ -37,10 +37,10 @@ export default function render ( ractive, target, anchor, occupants ) {
 
 		if ( anchor ) {
 			const docFrag = doc.createDocumentFragment();
-			ractive.fragment.render( docFrag );
+			ractive._fragment.render( docFrag );
 			target.insertBefore( docFrag, anchor );
 		} else {
-			ractive.fragment.render( target, occupants );
+			ractive._fragment.render( target, occupants );
 		}
 	}
 

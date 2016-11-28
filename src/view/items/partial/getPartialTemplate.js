@@ -89,10 +89,10 @@ function findConstructor ( constructor, key ) {
 
 function findParentPartial( name, parent ) {
 	if ( parent ) {
-		if ( parent.template && parent.template.p && parent.template.p[name] ) {
-			return parent.template.p[name];
-		} else if ( parent.parentFragment && parent.parentFragment.owner ) {
-			return findParentPartial( name, parent.parentFragment.owner );
+		if ( parent._template && parent._template.p && parent._template.p[name] ) {
+			return parent._template.p[name];
+		} else if ( parent._parentFragment && parent._parentFragment.owner ) {
+			return findParentPartial( name, parent._parentFragment.owner );
 		}
 	}
 }

@@ -22,15 +22,15 @@ function makeDirty ( query ) {
 export default class Component extends Item {
 	constructor ( options, ComponentConstructor ) {
 		super( options );
-		this.isAnchor = this.template.t === ANCHOR;
+		this.isAnchor = this._template.t === ANCHOR;
 		this.type = this.isAnchor ? ANCHOR : COMPONENT; // override ELEMENT from super
 
-		const partials = options.template.p || {};
-		if ( !( 'content' in partials ) ) partials.content = options.template.f || [];
+		const partials = options._template.p || {};
+		if ( !( 'content' in partials ) ) partials.content = options._template.f || [];
 		this._partials = partials; // TEMP
 
 		if ( this.isAnchor ) {
-			this.name = options.template.n;
+			this.name = options._template.n;
 
 			this.addChild = addChild;
 			this.removeChild = removeChild;
@@ -38,16 +38,16 @@ export default class Component extends Item {
 			const instance = create( ComponentConstructor.prototype );
 
 			this.instance = instance;
-			this.name = options.template.e;
+			this.name = options._template.e;
 
 			if ( instance.el ) {
 				warnIfDebug( `The <${this.name}> component has a default 'el' property; it has been disregarded` );
 			}
 
-			this.liveQueries = [];
+			this.__liveQueries = [];
 
 			// find container
-			let fragment = options.parentFragment;
+			let fragment = options._parentFragment;
 			let container;
 			while ( fragment ) {
 				if ( fragment.owner.type === YIELDER ) {
@@ -59,7 +59,7 @@ export default class Component extends Item {
 			}
 
 			// add component-instance-specific properties
-			instance.parent = this.parentFragment.ractive;
+			instance.parent = this._parentFragment.ractive;
 			instance.container = container || null;
 			instance.root = instance.parent.root;
 			instance.component = this;
@@ -72,19 +72,19 @@ export default class Component extends Item {
 			instance._inlinePartials = partials;
 		}
 
-		this.attributeByName = {};
+		this._attributeByName = {};
 
 		this.events = [];
 		this.attributes = [];
 		const leftovers = [];
-		( this.template.m || [] ).forEach( template => {
+		( this._template.m || [] ).forEach( template => {
 			switch ( template.t ) {
 				case ATTRIBUTE:
 				case EVENT:
 					this.attributes.push( createItem({
 						owner: this,
-						parentFragment: this.parentFragment,
-						template
+						_parentFragment: this._parentFragment,
+						_template: template
 					}) );
 					break;
 
@@ -102,8 +102,8 @@ export default class Component extends Item {
 		if ( leftovers.length ) {
 			this.attributes.push( new ConditionalAttribute({
 				owner: this,
-				parentFragment: this.parentFragment,
-				template: leftovers
+				_parentFragment: this._parentFragment,
+				_template: leftovers
 			}) );
 		}
 
@@ -117,7 +117,7 @@ export default class Component extends Item {
 			initialise( this.instance, {
 				partials: this._partials
 			}, {
-				cssIds: this.parentFragment.cssIds
+				cssIds: this._parentFragment.cssIds
 			});
 
 			this.eventHandlers.forEach( bind );
@@ -129,36 +129,36 @@ export default class Component extends Item {
 	bubble () {
 		if ( !this.dirty ) {
 			this.dirty = true;
-			this.parentFragment.bubble();
+			this._parentFragment.bubble();
 		}
 	}
 
 	destroyed () {
-		if ( !this.isAnchor && this.instance.fragment ) this.instance.fragment.destroyed();
+		if ( !this.isAnchor && this.instance._fragment ) this.instance._fragment.destroyed();
 	}
 
 	detach () {
 		if ( this.isAnchor ) {
-			if ( this.instance ) return this.instance.fragment.detach();
+			if ( this.instance ) return this.instance._fragment.detach();
 			return createDocumentFragment();
 		}
 
-		return this.instance.fragment.detach();
+		return this.instance._fragment.detach();
 	}
 
 	find ( selector, options ) {
-		if ( this.instance ) return this.instance.fragment.find( selector, options );
+		if ( this.instance ) return this.instance._fragment.find( selector, options );
 	}
 
 	findAll ( selector, query ) {
-		if ( this.instance ) this.instance.fragment.findAll( selector, query );
+		if ( this.instance ) this.instance._fragment.findAll( selector, query );
 	}
 
 	findComponent ( name, options ) {
 		if ( !name || this.name === name ) return this.instance;
 
-		if ( this.instance.fragment ) {
-			return this.instance.fragment.findComponent( name, options );
+		if ( this.instance._fragment ) {
+			return this.instance._fragment.findComponent( name, options );
 		}
 	}
 
@@ -167,7 +167,7 @@ export default class Component extends Item {
 			query.add( this.instance );
 
 			if ( query.live ) {
-				this.liveQueries.push( query );
+				this.__liveQueries.push( query );
 			}
 		}
 
@@ -175,12 +175,12 @@ export default class Component extends Item {
 	}
 
 	firstNode ( skipParent ) {
-		if ( this.instance ) return this.instance.fragment.firstNode( skipParent );
+		if ( this.instance ) return this.instance._fragment.firstNode( skipParent );
 	}
 
 	removeFromQuery ( query ) {
 		if ( this.instance ) query.remove( this.instance );
-		removeFromArray( this.liveQueries, query );
+		removeFromArray( this.__liveQueries, query );
 	}
 
 	render ( target, occupants ) {
@@ -201,7 +201,7 @@ export default class Component extends Item {
 	}
 
 	shuffled () {
-		if ( this.instance ) this.liveQueries.forEach( makeDirty );
+		if ( this.instance ) this.__liveQueries.forEach( makeDirty );
 		super.shuffled();
 	}
 
@@ -235,8 +235,8 @@ export default class Component extends Item {
 			this.attributes.forEach( unrender );
 			this.eventHandlers.forEach( unrender );
 
-			this.liveQueries.forEach( query => query.remove( this.instance ) );
-			this.liveQueries = [];
+			this.__liveQueries.forEach( query => query.remove( this.instance ) );
+			this.__liveQueries = [];
 		}
 
 		this.rendered = false;
@@ -245,7 +245,7 @@ export default class Component extends Item {
 	update () {
 		this.dirty = false;
 		if ( this.instance ) {
-			this.instance.fragment.update();
+			this.instance._fragment.update();
 			this.attributes.forEach( update );
 			this.eventHandlers.forEach( update );
 		}
@@ -258,12 +258,12 @@ function addChild ( meta ) {
 	const child = meta.instance;
 	meta.anchor = this;
 
-	meta.parentFragment = this.parentFragment;
+	meta._parentFragment = this._parentFragment;
 	meta.name = meta.nameOption || this.name;
 	this.name = meta.name;
 
 
-	if ( !child.isolated ) child.viewmodel.attached( this.parentFragment );
+	if ( !child.isolated ) child._viewmodel.attached( this._parentFragment );
 
 	// render as necessary
 	if ( this.rendered ) {
@@ -275,7 +275,7 @@ function removeChild ( meta ) {
 	// unrender as necessary
 	if ( this.item === meta ) {
 		unrenderItem( this, meta );
-		this.name = this.template.n;
+		this.name = this._template.n;
 	}
 }
 
@@ -283,29 +283,29 @@ function renderItem ( anchor, meta ) {
 	if ( !anchor.rendered ) return;
 
 	meta.shouldDestroy = false;
-	meta.parentFragment = anchor.parentFragment;
+	meta._parentFragment = anchor._parentFragment;
 
 	anchor.item = meta;
 	anchor.instance = meta.instance;
-	anchor.liveQueries = meta.liveQueries;
-	const nextNode = anchor.parentFragment.findNextNode( anchor );
+	anchor.__liveQueries = meta.__liveQueries;
+	const nextNode = anchor._parentFragment.findNextNode( anchor );
 
-	if ( meta.instance.fragment.rendered ) {
+	if ( meta.instance._fragment.rendered ) {
 		meta.instance.unrender();
 	}
 
 	meta.partials = meta.instance.partials;
 	meta.instance.partials = extend( {}, meta.partials, anchor._partials );
 
-	meta.instance.fragment.unbind();
-	meta.instance.fragment.bind( meta.instance.viewmodel );
+	meta.instance._fragment.unbind();
+	meta.instance._fragment.bind( meta.instance._viewmodel );
 
 	anchor.attributes.forEach( bind );
 	anchor.eventHandlers.forEach( bind );
 	anchor.attributes.forEach( callRender );
 	anchor.eventHandlers.forEach( callRender );
 
-	const target = anchor.parentFragment.findParentNode();
+	const target = anchor._parentFragment.findParentNode();
 	render( meta.instance, target, target.contains( nextNode ) ? nextNode : null );
 
 	if ( meta.lastBound !== anchor ) {
@@ -327,14 +327,14 @@ function unrenderItem ( anchor, meta ) {
 	anchor.attributes.forEach( unbind );
 
 	meta.instance.el = meta.instance.anchor = null;
-	meta.parentFragment = null;
+	meta._parentFragment = null;
 	meta.anchor = null;
 	anchor.item = null;
 	anchor.instance = null;
 
-	meta.liveQueries.forEach( q => q.remove( meta.instance ) );
-	meta.liveQueries = [];
-	anchor.liveQueries = null;
+	meta.__liveQueries.forEach( q => q.remove( meta.instance ) );
+	meta.__liveQueries = [];
+	anchor.__liveQueries = null;
 }
 
 let checking = [];

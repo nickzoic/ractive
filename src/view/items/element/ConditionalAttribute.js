@@ -24,19 +24,19 @@ export default class ConditionalAttribute extends Item {
 
 		this.owner = options.owner;
 
-		this.fragment = new Fragment({
+		this._fragment = new Fragment({
 			ractive: this.ractive,
 			owner: this,
-			template: this.template
+			_template: this._template
 		});
 		// this fragment can't participate in node-y things
-		this.fragment.findNextNode = noop;
+		this._fragment.findNextNode = noop;
 
 		this.dirty = false;
 	}
 
 	bind () {
-		this.fragment.bind();
+		this._fragment.bind();
 	}
 
 	bubble () {
@@ -53,7 +53,7 @@ export default class ConditionalAttribute extends Item {
 		}
 
 		attributes = true;
-		if ( !this.rendered ) this.fragment.render();
+		if ( !this.rendered ) this._fragment.render();
 		attributes = false;
 
 		this.rendered = true;
@@ -62,16 +62,16 @@ export default class ConditionalAttribute extends Item {
 	}
 
 	toString () {
-		return this.fragment.toString();
+		return this._fragment.toString();
 	}
 
 	unbind () {
-		this.fragment.unbind();
+		this._fragment.unbind();
 	}
 
 	unrender () {
 		this.rendered = false;
-		this.fragment.unrender();
+		this._fragment.unrender();
 	}
 
 	update () {
@@ -82,11 +82,11 @@ export default class ConditionalAttribute extends Item {
 			this.dirty = false;
 
 			attributes = true;
-			this.fragment.update();
+			this._fragment.update();
 			attributes = false;
 
 			if ( this.rendered && this.node ) {
-				str = this.fragment.toString();
+				str = this._fragment.toString();
 				attrs = parseAttributes( str, this.isSvg );
 
 				// any attributes that previously existed but no longer do

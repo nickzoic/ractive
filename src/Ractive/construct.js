@@ -48,7 +48,7 @@ export default function construct ( ractive, options ) {
 		ractive
 	});
 
-	ractive.viewmodel = viewmodel;
+	ractive._viewmodel = viewmodel;
 
 	// Add computed properties
 	const computed = extend( create( ractive.constructor.prototype.computed ), options.computed );
@@ -66,7 +66,7 @@ function getAdaptors ( ractive, protoAdapt, options ) {
 	const builtins = [];
 	const srcs = [ protoAdapt, adapt ];
 	if ( ractive.parent && !ractive.isolated ) {
-		srcs.push( ractive.parent.viewmodel.adaptors );
+		srcs.push( ractive.parent._viewmodel.adaptors );
 	}
 	srcs.push( builtins );
 

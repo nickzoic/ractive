@@ -24,50 +24,50 @@ export default class Attribute extends Item {
 	constructor ( options ) {
 		super( options );
 
-		this.name = options.template.n;
+		this.name = options._template.n;
 		this.namespace = null;
 
-		this.owner = options.owner || options.parentFragment.owner || options.element || findElement( options.parentFragment );
-		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.parentFragment ) );
-		this.parentFragment = options.parentFragment; // shared
-		this.ractive = this.parentFragment.ractive;
+		this.owner = options.owner || options._parentFragment.owner || options._element || findElement( options._parentFragment );
+		this._element = options._element || (this.owner._attributeByName ? this.owner : findElement( options._parentFragment ) );
+		this._parentFragment = options._parentFragment; // shared
+		this.ractive = this._parentFragment.ractive;
 
 		this.rendered = false;
 		this.updateDelegate = null;
-		this.fragment = null;
+		this._fragment = null;
 
-		this.element.attributeByName[ this.name ] = this;
+		this._element._attributeByName[ this.name ] = this;
 
-		if ( !isArray( options.template.f ) ) {
-			this.value = options.template.f;
+		if ( !isArray( options._template.f ) ) {
+			this.value = options._template.f;
 			if ( this.value === 0 ) {
 				this.value = '';
 			}
 		} else {
-			this.fragment = new Fragment({
+			this._fragment = new Fragment({
 				owner: this,
-				template: options.template.f
+				_template: options._template.f
 			});
 		}
 
-		this.interpolator = this.fragment &&
-			this.fragment.items.length === 1 &&
-			this.fragment.items[0].type === INTERPOLATOR &&
-			this.fragment.items[0];
+		this.interpolator = this._fragment &&
+			this._fragment.items.length === 1 &&
+			this._fragment.items[0].type === INTERPOLATOR &&
+			this._fragment.items[0];
 
 		if ( this.interpolator ) this.interpolator.owner = this;
 	}
 
 	bind () {
-		if ( this.fragment ) {
-			this.fragment.bind();
+		if ( this._fragment ) {
+			this._fragment.bind();
 		}
 	}
 
 	bubble () {
 		if ( !this.dirty ) {
-			this.parentFragment.bubble();
-			this.element.bubble();
+			this._parentFragment.bubble();
+			this._element.bubble();
 			this.dirty = true;
 		}
 	}
@@ -77,19 +77,19 @@ export default class Attribute extends Item {
 	}
 
 	getString () {
-		return this.fragment ?
-			this.fragment.toString() :
+		return this._fragment ?
+			this._fragment.toString() :
 			this.value != null ? '' + this.value : '';
 	}
 
 	// TODO could getValue ever be called for a static attribute,
 	// or can we assume that this.fragment exists?
 	getValue () {
-		return this.fragment ? this.fragment.valueOf() : booleanAttributes.test( this.name ) ? true : this.value;
+		return this._fragment ? this._fragment.valueOf() : booleanAttributes.test( this.name ) ? true : this.value;
 	}
 
 	render () {
-		const node = this.element.node;
+		const node = this._element.node;
 		this.node = node;
 
 		// should we use direct property access, or setAttribute?
@@ -129,21 +129,21 @@ export default class Attribute extends Item {
 		const value = this.getValue();
 
 		// Special case - select and textarea values (should not be stringified)
-		if ( this.name === 'value' && ( this.element.getAttribute( 'contenteditable' ) !== undefined || ( this.element.name === 'select' || this.element.name === 'textarea' ) ) ) {
+		if ( this.name === 'value' && ( this._element.getAttribute( 'contenteditable' ) !== undefined || ( this._element.name === 'select' || this._element.name === 'textarea' ) ) ) {
 			return;
 		}
 
 		// Special case – bound radio `name` attributes
-		if ( this.name === 'name' && this.element.name === 'input' && this.interpolator && this.element.getAttribute( 'type' ) === 'radio' ) {
-			return `name="{{${this.interpolator.model.getKeypath()}}}"`;
+		if ( this.name === 'name' && this._element.name === 'input' && this.interpolator && this._element.getAttribute( 'type' ) === 'radio' ) {
+			return `name="{{${this.interpolator.model._getKeypath()}}}"`;
 		}
 
 		// Special case - style and class attributes and directives
-		if ( this.owner === this.element && ( this.name === 'style' || this.name === 'class' || this.styleName || this.inlineClass ) ) {
+		if ( this.owner === this._element && ( this.name === 'style' || this.name === 'class' || this.styleName || this.inlineClass ) ) {
 			return;
 		}
 
-		if ( !this.rendered && this.owner === this.element && ( !this.name.indexOf( 'style-' ) || !this.name.indexOf( 'class-' ) ) ) {
+		if ( !this.rendered && this.owner === this._element && ( !this.name.indexOf( 'style-' ) || !this.name.indexOf( 'class-' ) ) ) {
 			if ( !this.name.indexOf( 'style-' ) ) {
 				this.styleName = camelize( this.name.substr( 6 ) );
 			} else {
@@ -163,7 +163,7 @@ export default class Attribute extends Item {
 	}
 
 	unbind () {
-		if ( this.fragment ) this.fragment.unbind();
+		if ( this._fragment ) this._fragment.unbind();
 	}
 
 	unrender () {
@@ -175,7 +175,7 @@ export default class Attribute extends Item {
 	update () {
 		if ( this.dirty ) {
 			this.dirty = false;
-			if ( this.fragment ) this.fragment.update();
+			if ( this._fragment ) this._fragment.update();
 			if ( this.rendered ) this.updateDelegate();
 			if ( this.isTwoway && !this.locked ) {
 				this.interpolator.twowayBinding.lastVal( true, this.interpolator.model.get() );

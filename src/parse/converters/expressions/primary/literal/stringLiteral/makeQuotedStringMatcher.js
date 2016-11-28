@@ -16,8 +16,8 @@ export default function ( okQuote ) {
 		let next;
 
 		while ( !done ) {
-			next = ( parser.matchPattern( stringMiddlePattern ) || parser.matchPattern( escapeSequencePattern ) ||
-				parser.matchString( okQuote ) );
+			next = ( parser._matchPattern( stringMiddlePattern ) || parser._matchPattern( escapeSequencePattern ) ||
+				parser._matchString( okQuote ) );
 			if ( next ) {
 				if ( next === `"` ) {
 					literal += `\\"`;
@@ -27,7 +27,7 @@ export default function ( okQuote ) {
 					literal += next;
 				}
 			} else {
-				next = parser.matchPattern( lineContinuationPattern );
+				next = parser._matchPattern( lineContinuationPattern );
 				if ( next ) {
 					// convert \(newline-like) into a \u escape, which is allowed in JSON
 					literal += '\\u' + ( '000' + next.charCodeAt(1).toString(16) ).slice( -4 );

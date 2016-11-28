@@ -6,7 +6,7 @@ export default function observeList ( keypath, callback, options ) {
 		throw new Error( 'ractive.observeList() must be passed a string as its first argument' );
 	}
 
-	const model = this.viewmodel.joinAll( splitKeypath( keypath ) );
+	const model = this._viewmodel.joinAll( splitKeypath( keypath ) );
 	const observer = new ListObserver( this, model, callback, options || {} );
 
 	// add observer to the Ractive instance, so it can be
@@ -28,7 +28,7 @@ class ListObserver {
 	constructor ( context, model, callback, options ) {
 		this.context = context;
 		this.model = model;
-		this.keypath = model.getKeypath();
+		this.keypath = model._getKeypath();
 		this.callback = callback;
 
 		this.pending = null;
@@ -38,13 +38,13 @@ class ListObserver {
 		if ( options.init !== false ) {
 			this.sliced = [];
 			this.shuffle([]);
-			this.handleChange();
+			this._handleChange();
 		} else {
 			this.sliced = this.slice();
 		}
 	}
 
-	handleChange () {
+	_handleChange () {
 		if ( this.pending ) {
 			// post-shuffle
 			this.callback( this.pending );
@@ -54,7 +54,7 @@ class ListObserver {
 		else {
 			// entire array changed
 			this.shuffle( this.sliced.map( negativeOne ) );
-			this.handleChange();
+			this._handleChange();
 		}
 	}
 

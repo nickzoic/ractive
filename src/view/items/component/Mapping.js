@@ -12,27 +12,27 @@ export default class Mapping extends Item {
 	constructor ( options ) {
 		super( options );
 
-		this.name = options.template.n;
+		this.name = options._template.n;
 
-		this.owner = options.owner || options.parentFragment.owner || options.element || findElement( options.parentFragment );
-		this.element = options.element || (this.owner.attributeByName ? this.owner : findElement( options.parentFragment ) );
-		this.parentFragment = this.element.parentFragment; // shared
-		this.ractive = this.parentFragment.ractive;
+		this.owner = options.owner || options._parentFragment.owner || options._element || findElement( options._parentFragment );
+		this._element = options._element || (this.owner._attributeByName ? this.owner : findElement( options._parentFragment ) );
+		this._parentFragment = this._element._parentFragment; // shared
+		this.ractive = this._parentFragment.ractive;
 
-		this.fragment = null;
+		this._fragment = null;
 
-		this.element.attributeByName[ this.name ] = this;
+		this._element._attributeByName[ this.name ] = this;
 
-		this.value = options.template.f;
+		this.value = options._template.f;
 	}
 
 	bind () {
-		if ( this.fragment ) {
-			this.fragment.bind();
+		if ( this._fragment ) {
+			this._fragment.bind();
 		}
 
-		const template = this.template.f;
-		const viewmodel = this.element.instance.viewmodel;
+		const template = this._template.f;
+		const viewmodel = this._element.instance._viewmodel;
 
 		if ( template === 0 ) {
 			// empty attributes are `true`
@@ -52,10 +52,10 @@ export default class Mapping extends Item {
 	render () {}
 
 	unbind () {
-		if ( this.fragment ) this.fragment.unbind();
+		if ( this._fragment ) this._fragment.unbind();
 		if ( this.boundFragment ) this.boundFragment.unbind();
 
-		if ( this.element.bound ) {
+		if ( this._element.bound ) {
 			if ( this.link.target === this.model ) this.link.owner.unlink();
 		}
 	}
@@ -65,7 +65,7 @@ export default class Mapping extends Item {
 	update () {
 		if ( this.dirty ) {
 			this.dirty = false;
-			if ( this.fragment ) this.fragment.update();
+			if ( this._fragment ) this._fragment.update();
 			if ( this.boundFragment ) this.boundFragment.update();
 			if ( this.rendered ) this.updateDelegate();
 		}
@@ -73,17 +73,17 @@ export default class Mapping extends Item {
 }
 
 function createMapping ( item ) {
-	const template = item.template.f;
-	const viewmodel = item.element.instance.viewmodel;
+	const template = item._template.f;
+	const viewmodel = item._element.instance._viewmodel;
 	const childData = viewmodel.value;
 
 	if ( template.length === 1 && template[0].t === INTERPOLATOR ) {
-		item.model = resolve( item.parentFragment, template[0] );
+		item.model = resolve( item._parentFragment, template[0] );
 
 		if ( !item.model ) {
-			warnOnceIfDebug( `The ${item.name}='{{${template[0].r}}}' mapping is ambiguous, and may cause unexpected results. Consider initialising your data to eliminate the ambiguity`, { ractive: item.element.instance }); // TODO add docs page explaining item
-			item.parentFragment.ractive.get( item.name ); // side-effect: create mappings as necessary
-			item.model = item.parentFragment.findContext().joinKey( item.name );
+			warnOnceIfDebug( `The ${item.name}='{{${template[0].r}}}' mapping is ambiguous, and may cause unexpected results. Consider initialising your data to eliminate the ambiguity`, { ractive: item._element.instance }); // TODO add docs page explaining item
+			item._parentFragment.ractive.get( item.name ); // side-effect: create mappings as necessary
+			item.model = item._parentFragment.findContext().joinKey( item.name );
 		}
 
 		item.link = viewmodel.createLink( item.name, item.model, template[0].r );
@@ -96,7 +96,7 @@ function createMapping ( item ) {
 	else {
 		item.boundFragment = new Fragment({
 			owner: item,
-			template
+			_template: template
 		}).bind();
 
 		item.model = viewmodel.joinKey( item.name );

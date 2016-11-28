@@ -17,24 +17,24 @@ const dollarArgsPattern = /^\$(\d+)(\..+)?$/;
 
 export default class EventDirective {
 	constructor ( options ) {
-		this.owner = options.owner || options.parentFragment.owner || findElement( options.parentFragment );
-		this.element = this.owner.attributeByName ? this.owner : findElement( options.parentFragment, true );
-		this.template = options.template;
-		this.parentFragment = options.parentFragment;
-		this.ractive = options.parentFragment.ractive;
+		this.owner = options.owner || options._parentFragment.owner || findElement( options._parentFragment );
+		this._element = this.owner._attributeByName ? this.owner : findElement( options._parentFragment, true );
+		this._template = options._template;
+		this._parentFragment = options._parentFragment;
+		this.ractive = options._parentFragment.ractive;
 
 		this.events = [];
 
-		if ( this.element.type === COMPONENT || this.element.type === ANCHOR ) {
-			this.template.n.forEach( n => {
-				this.events.push( new RactiveEvent( this.element, n ) );
+		if ( this._element.type === COMPONENT || this._element.type === ANCHOR ) {
+			this._template.n.forEach( n => {
+				this.events.push( new RactiveEvent( this._element, n ) );
 			});
 		} else {
-			this.template.n.forEach( n => {
+			this._template.n.forEach( n => {
 				const fn = findInViewHierarchy( 'events', this.ractive, n );
 				// we need to pass in "this" in order to get
 				// access to node when it is created.
-				this.events.push( fn ? new CustomEvent( fn, this.element ) : new DOMEvent( n, this.element ) );
+				this.events.push( fn ? new CustomEvent( fn, this._element ) : new DOMEvent( n, this._element ) );
 			});
 		}
 
@@ -44,9 +44,9 @@ export default class EventDirective {
 	}
 
 	bind () {
-		addToArray( this.element.events, this );
+		addToArray( this._element.events, this );
 
-		setupArgsFn( this, this.template, this.parentFragment, {
+		setupArgsFn( this, this._template, this._parentFragment, {
 			specialRef ( ref ) {
 				const specialMatch = specialPattern.exec( ref );
 				if ( specialMatch ) {
@@ -67,7 +67,7 @@ export default class EventDirective {
 				}
 			}
 		});
-		if ( !this.fn ) this.action = this.template.f;
+		if ( !this.fn ) this.action = this._template.f;
 	}
 
 	destroyed () {
@@ -120,7 +120,7 @@ export default class EventDirective {
 					original.preventDefault && original.preventDefault();
 					original.stopPropagation && original.stopPropagation();
 				} else {
-					warnOnceIfDebug( `handler '${this.template.n.join( ' ' )}' returned false, but there is no event available to cancel` );
+					warnOnceIfDebug( `handler '${this._template.n.join( ' ' )}' returned false, but there is no event available to cancel` );
 				}
 			}
 
@@ -139,7 +139,7 @@ export default class EventDirective {
 		}
 	}
 
-	handleChange () {}
+	_handleChange () {}
 
 	rebind ( next, previous ) {
 		if ( !this.models ) return;
@@ -160,9 +160,9 @@ export default class EventDirective {
 	toString() { return ''; }
 
 	unbind () {
-		removeFromArray( this.element.events, this );
+		removeFromArray( this._element.events, this );
 
-		teardownArgsFn( this, this.template );
+		teardownArgsFn( this, this._template );
 	}
 
 	unrender () {

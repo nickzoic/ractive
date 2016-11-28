@@ -71,8 +71,8 @@ export default {
 	},
 
 	reset ( ractive ) {
-		const result = this.init( ractive.constructor, ractive, ractive.viewmodel );
-		ractive.viewmodel.root.set( result );
+		const result = this.init( ractive.constructor, ractive, ractive._viewmodel );
+		ractive._viewmodel.root.set( result );
 		return true;
 	}
 };

@@ -30,7 +30,7 @@ export default function updateLiveQueries ( component ) {
 		if ( query.remote || !remotes[ query.ractive._guid ] ) {
 			query.add( component.instance );
 			// keep register of applicable selectors, for when we teardown
-			component.liveQueries.push( query );
+			component.__liveQueries.push( query );
 		}
 	}
 }

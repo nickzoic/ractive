@@ -3,7 +3,7 @@ import noop from '../../utils/noop';
 
 export default class Doctype extends Item {
 	toString () {
-		return '<!DOCTYPE' + this.template.a + '>';
+		return '<!DOCTYPE' + this._template.a + '>';
 	}
 }
 

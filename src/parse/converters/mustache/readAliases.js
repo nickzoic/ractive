@@ -9,7 +9,7 @@ export function readAliases( parser ) {
 	let alias;
 	const start = parser.pos;
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	alias = readAlias( parser );
 
@@ -17,9 +17,9 @@ export function readAliases( parser ) {
 		alias.x = refineExpression( alias.x, {} );
 		aliases.push( alias );
 
-		parser.allowWhitespace();
+		parser._allowWhitespace();
 
-		while ( parser.matchString(',') ) {
+		while ( parser._matchString(',') ) {
 			alias = readAlias( parser );
 
 			if ( !alias ) {
@@ -29,7 +29,7 @@ export function readAliases( parser ) {
 			alias.x = refineExpression( alias.x, {} );
 			aliases.push( alias );
 
-			parser.allowWhitespace();
+			parser._allowWhitespace();
 		}
 
 		return aliases;
@@ -42,7 +42,7 @@ export function readAliases( parser ) {
 export function readAlias( parser ) {
 	const start = parser.pos;
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
 	const expr = readExpression( parser, [] );
 
@@ -51,16 +51,16 @@ export function readAlias( parser ) {
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchPattern( asRE ) ) {
+	if ( !parser._matchPattern( asRE ) ) {
 		parser.pos = start;
 		return null;
 	}
 
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	const alias = parser.matchPattern( legalAlias );
+	const alias = parser._matchPattern( legalAlias );
 
 	if ( !alias ) {
 		parser.error( 'Expected a legal alias name.' );

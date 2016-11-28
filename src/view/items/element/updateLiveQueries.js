@@ -30,7 +30,7 @@ export default function updateLiveQueries ( element ) {
 		if ( query.remote || !remotes[ query.ractive._guid ] ) {
 			query.add( node );
 			// keep register of applicable selectors, for when we teardown
-			element.liveQueries.push( query );
+			element.__liveQueries.push( query );
 		}
 	}
 }

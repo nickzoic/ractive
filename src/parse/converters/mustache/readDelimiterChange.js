@@ -2,36 +2,36 @@ const delimiterChangePattern = /^[^\s=]+/;
 const whitespacePattern = /^\s+/;
 
 export default function readDelimiterChange ( parser ) {
-	if ( !parser.matchString( '=' ) ) {
+	if ( !parser._matchString( '=' ) ) {
 		return null;
 	}
 
 	const start = parser.pos;
 
 	// allow whitespace before new opening delimiter
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	const opening = parser.matchPattern( delimiterChangePattern );
+	const opening = parser._matchPattern( delimiterChangePattern );
 	if ( !opening ) {
 		parser.pos = start;
 		return null;
 	}
 
 	// allow whitespace (in fact, it's necessary...)
-	if ( !parser.matchPattern( whitespacePattern ) ) {
+	if ( !parser._matchPattern( whitespacePattern ) ) {
 		return null;
 	}
 
-	const closing = parser.matchPattern( delimiterChangePattern );
+	const closing = parser._matchPattern( delimiterChangePattern );
 	if ( !closing ) {
 		parser.pos = start;
 		return null;
 	}
 
 	// allow whitespace before closing '='
-	parser.allowWhitespace();
+	parser._allowWhitespace();
 
-	if ( !parser.matchString( '=' ) ) {
+	if ( !parser._matchString( '=' ) ) {
 		parser.pos = start;
 		return null;
 	}
