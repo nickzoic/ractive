@@ -1,11 +1,7 @@
 import { fatal, welcome } from '../utils/log';
 import { missingPlugin } from '../config/errors';
-import { magic as magicSupported } from '../config/environment';
 import { ensureArray, combine } from '../utils/array';
 import { findInViewHierarchy } from '../shared/registry';
-import arrayAdaptor from './static/adaptors/array/index';
-import magicAdaptor from './static/adaptors/magic';
-import magicArrayAdaptor from './static/adaptors/magicArray';
 import { create, extend } from '../utils/object';
 import dataConfigurator from './config/custom/data';
 import RootModel from '../model/RootModel';
@@ -63,30 +59,9 @@ function getAdaptors ( ractive, protoAdapt, options ) {
 	protoAdapt = protoAdapt.map( lookup );
 	const adapt = ensureArray( options.adapt ).map( lookup );
 
-	const builtins = [];
 	const srcs = [ protoAdapt, adapt ];
 	if ( ractive.parent && !ractive.isolated ) {
 		srcs.push( ractive.parent.viewmodel.adaptors );
-	}
-	srcs.push( builtins );
-
-	const magic = 'magic' in options ? options.magic : ractive.magic;
-	const modifyArrays = 'modifyArrays' in options ? options.modifyArrays : ractive.modifyArrays;
-
-	if ( magic ) {
-		if ( !magicSupported ) {
-			throw new Error( 'Getters and setters (magic mode) are not supported in this browser' );
-		}
-
-		if ( modifyArrays ) {
-			builtins.push( magicArrayAdaptor );
-		}
-
-		builtins.push( magicAdaptor );
-	}
-
-	if ( modifyArrays ) {
-		builtins.push( arrayAdaptor );
 	}
 
 	return combine.apply( null, srcs );

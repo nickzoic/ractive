@@ -24,10 +24,7 @@ export default {
 	syncComputedChildren:   false,
 	resolveInstanceMembers: true,
 	warnAboutAmbiguity:     false,
-	magic:                  false,
-	modifyArrays:           false,
 	adapt:                  [],
-	isolated:               false,
 	twoway:                 true,
 	lazy:                   false,
 
