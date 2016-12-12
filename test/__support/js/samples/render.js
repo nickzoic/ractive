@@ -1002,12 +1002,6 @@ const renderTests = [
 		result: `<ul><li>items.0.some - a</li><li>items.2.some - c</li></ul>`
 	},
 	{
-		name: '@keypath(...) can be used to refer to a path relative to the current context',
-		template: `<ul>{{#items}}{{#some}}<li>{{@keypath(../)}} - {{path}}</li>{{/}}{{/}}</ul>`,
-		data: { items: [ { some: { path: 'a' } }, { notsome: { path: 'b' } }, { some: { path: 'c' } } ] },
-		result: `<ul><li>items.0 - a</li><li>items.2 - c</li></ul>`
-	},
-	{
 		name: '@keypath ref followed by something with parens reads correctly',
 		template: `<ul>{{#items}}{{#some}}<li>{{@keypath}} - {{path.toLowerCase()}}</li>{{/}}{{/}}</ul>`,
 		data: { items: [ { some: { path: 'a' } }, { notsome: { path: 'b' } }, { some: { path: 'c' } } ] },
