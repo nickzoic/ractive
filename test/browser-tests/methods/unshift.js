@@ -72,7 +72,7 @@ export default function() {
 			{{#each outer}}
 			{{#each inner}}
 			{{@keypath}}
-			{{#if .foo || some.prop > 3}}
+			{{#if .foo || ~/some.prop > 3}}
 			<span>{{@keypath}}</span>
 			{{/if}}
 			<br/>

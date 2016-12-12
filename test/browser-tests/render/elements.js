@@ -11,7 +11,7 @@ export default function() {
 			template: `
 				<select>
 					{{#options}}
-						<option value="{{.}}" selected="{{.===selected}}">{{.}}</option>
+						<option value="{{.}}" selected="{{.===~/selected}}">{{.}}</option>
 					{{/options}}
 				</select>`,
 			data: {

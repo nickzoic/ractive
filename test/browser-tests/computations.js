@@ -361,32 +361,6 @@ export default function() {
 		});
 	}
 
-
-	test( 'Unresolved computations resolve when parent component data exists', t => {
-		const Component = Ractive.extend({
-			template: '{{FOO}} {{BAR}}',
-			computed: {
-				FOO: '${foo}.toUpperCase()',
-				BAR () {
-					return this.get( 'bar' ).toUpperCase();
-				}
-			}
-		});
-
-		new Ractive({
-			el: fixture,
-			template: '<Component/>',
-			data: {
-				foo: 'fee fi',
-				bar: 'fo fum'
-			},
-			components: { Component }
-		});
-
-		t.equal( fixture.innerHTML, 'FEE FI FO FUM' );
-
-	});
-
 	test( 'Computed properties referencing bound parent data', t => {
 		const List = Ractive.extend({
 			template: `{{limits.sum}}`,
@@ -669,7 +643,7 @@ export default function() {
 			template: `
 				<ul>
 					{{#each items}}
-						<li>{{ func(this) }}-{{ this.f() }}</li>
+						<li>{{ ~/func(this) }}-{{ this.f() }}</li>
 					{{/each}}
 				</ul>`,
 			data: () => ({
@@ -692,7 +666,7 @@ export default function() {
 			el: fixture,
 			template: `
 				{{#each items}}
-					<p>{{this}}/{{getItem(this)}}</p>
+					<p>{{this}}/{{~/getItem(this)}}</p>
 				{{/each}}`,
 			data: {
 				odd: true,
@@ -712,26 +686,10 @@ export default function() {
 		t.htmlEqual( fixture.innerHTML, '<p>d/d</p><p>e/e</p>' );
 	});
 
-	test( 'ExpressionProxy should notify its deps when it resolves (#2214)', t => {
-		const r = new Ractive({
-			el: fixture,
-			template: '-{{#with foo}}{{#if bar[0] && bar[0] === bar[1]}}ok{{/if}}{{/with}}',
-			data: {
-				foo: { x: 1 }
-			}
-		});
-
-		t.htmlEqual( fixture.innerHTML, '-' );
-
-		r.set( 'bar', [ 1, 1 ] );
-
-		t.htmlEqual( fixture.innerHTML, '-ok' );
-	});
-
 	test( 'reference expression proxy should play nicely with capture (#2550)', t => {
 		const r = new Ractive({
 			el: fixture,
-			template: `{{#with wat[idx]}}{{ident(.)}}{{/with}}`,
+			template: `{{#with wat[idx]}}{{~/ident(.)}}{{/with}}`,
 			computed: {
 				wat() {
 					return this.get('arr');
@@ -754,7 +712,7 @@ export default function() {
 
 		const r = new Ractive({
 			el: fixture,
-			template: `{{#each foo}}{{ check(.) ? 'yep ' : 'nope ' }}{{/each}}`,
+			template: `{{#each foo}}{{ ~/check(.) ? 'yep ' : 'nope ' }}{{/each}}`,
 			data: {
 				foo: [ 1, 20 ],
 				check(n) {

@@ -101,7 +101,7 @@ export default function() {
 
 		const ractive = new Ractive({
 			el: fixture,
-			template: '<Widget>yield</Widget>',
+			template: '<Widget foo="{{foo}}">yield</Widget>',
 			components: { Widget },
 			data: { foo: true }
 		});
@@ -122,7 +122,7 @@ export default function() {
 
 		const ractive = new Ractive({
 			el: fixture,
-			template: '<Widget>YIELDED</Widget>',
+			template: '<Widget items="{{items}}">YIELDED</Widget>',
 			components: { Widget },
 			data: { items: [ 'a', 'b', 'c' ] }
 		});

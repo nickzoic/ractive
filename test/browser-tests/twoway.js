@@ -11,7 +11,7 @@ export default function() {
 	test( 'Two-way bindings work with index references', t => {
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items:i}}<label><input value="{{items[i].name}}"> {{name}}</label>{{/items}}',
+			template: '{{#items:i}}<label><input value="{{~/items[i].name}}"> {{name}}</label>{{/items}}',
 			data: { items: [{ name: 'foo' }, { name: 'bar' }] }
 		});
 
@@ -432,7 +432,7 @@ export default function() {
 	test( 'Radio name inputs respond to model changes (regression, see #783)', t => {
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items}}<input type="radio" name="{{foo}}" value="{{this}}"/>{{/items}}',
+			template: '{{#items}}<input type="radio" name="{{~/foo}}" value="{{this}}"/>{{/items}}',
 			data: {
 				foo: undefined,
 				items: [ 'a', 'b', 'c' ]
@@ -464,7 +464,7 @@ export default function() {
 					return list.sort( ( a, b ) => a.v.localeCompare( b.v ) ).map( o => o.o );
 				}
 			},
-			template: `{{#each rows}}{{#with list[.]}}<input value="{{.v}}" />{{/with}}{{/each}}`
+			template: `{{#each rows}}{{#with ~/list[.]}}<input value="{{.v}}" />{{/with}}{{/each}}`
 		});
 		const inputs = r.findAll( 'input' );
 		inputs[0].value = 'z';
@@ -524,29 +524,6 @@ export default function() {
 		ractive.find( 'input' ).checked = true;
 		ractive.updateModel();
 		t.deepEqual( ractive.get( 'selected' ), { one: 'a', two: 'b' });
-	});
-
-	test( 'Ambiguous reference expressions in two-way bindings attach to correct context', t => {
-		onWarn( () => {} ); // suppress
-
-		const ractive = new Ractive({
-			el: fixture,
-			template: `
-				<p>obj.foo[{{bar}}]: {{obj.foo[bar]}}</p>
-				{{#with obj}}
-					<input value='{{foo[bar]}}'>
-				{{/with}}`,
-			data: {
-				bar: 0,
-				obj: { x: 1 }
-			}
-		});
-
-		ractive.find( 'input' ).value = 'test';
-		ractive.updateModel();
-
-		t.deepEqual( ractive.get( 'obj.foo' ), [ 'test' ] );
-		t.htmlEqual( fixture.innerHTML, '<p>obj.foo[0]: test</p><input>' );
 	});
 
 	test( 'Static bindings can only be one-way (#1149)', t => {
@@ -697,7 +674,7 @@ export default function() {
 
 		new Ractive({
 			el: fixture,
-			template: '{{#each items}}<input type="checkbox" name="{{selected}}" value="{{this}}">{{/each}}',
+			template: '{{#each items}}<input type="checkbox" name="{{~/selected}}" value="{{this}}">{{/each}}',
 			data: {
 				items: [ 'a', 'b', 'c' ],
 				// will fail without this
@@ -710,27 +687,6 @@ export default function() {
 				inputs = this.findAll( 'input' );
 			}
 		});
-
-		t.ok( !inputs[0].checked );
-		t.ok(  inputs[1].checked );
-		t.ok( !inputs[2].checked );
-	});
-
-	test( 'Changes made after render to unresolved', t => {
-
-		const ractive = new Ractive({
-			el: fixture,
-			template: '{{#each items}}<input type="checkbox" name="{{selected}}" value="{{this}}">{{/each}}',
-			data: {
-				items: [ 'a', 'b', 'c' ],
-				// will fail without this
-				selected: null
-			}
-		});
-
-		ractive.set( 'selected', [ 'b' ] );
-
-		const inputs = ractive.findAll( 'input' );
 
 		t.ok( !inputs[0].checked );
 		t.ok(  inputs[1].checked );
@@ -781,23 +737,6 @@ export default function() {
 	});
 
 	if ( hasUsableConsole ) {
-		// #1740: this test fails because {{#with ...}} now behaves as {{#if ...}}{{#with ...}}?
-		test( 'Ambiguous references trigger a warning (#1692)', t => {
-			t.expect( 1 );
-
-			onWarn( warning => {
-				t.ok( /ambiguous/.test( warning ) );
-			});
-
-			new Ractive({
-				el: fixture,
-				template: `{{#with whatever}}<input value='{{uniqueToThisTest}}'>{{/with}}`,
-				data: {
-					whatever: { x: 1 }
-				}
-			});
-		});
-
 		test( 'Using expressions in two-way bindings triggers a warning (#1399)', t => {
 			onWarn( message => {
 				t.ok( ~message.indexOf( 'Cannot use two-way binding on <input> element: foo() is read-only' ) );
@@ -851,7 +790,7 @@ export default function() {
 	test( 'Two-way binding can be set up against expressions that resolve to regular keypaths', t => {
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items:i}}<label><input value="{{ proxies[i].name }}"> name: {{ proxies[i].name }}</label>{{/items}}',
+			template: '{{#items:i}}<label><input value="{{ ~/proxies[i].name }}"> name: {{ ~/proxies[i].name }}</label>{{/items}}',
 			data: {
 				items: [{}],
 				proxies: []
@@ -1009,7 +948,7 @@ export default function() {
 		const common = {};
 		const r = new Ractive({
 			el: fixture,
-			template: '{{#each items}}<input type="checkbox" name="{{list}}" value="{{.}}" />{{/each}}',
+			template: '{{#each items}}<input type="checkbox" name="{{~/list}}" value="{{.}}" />{{/each}}',
 			data: { list: [ common ], items: [ common, common, {} ] }
 		});
 
@@ -1046,7 +985,7 @@ export default function() {
 			el: fixture,
 			template: `
 				{{#each things}}
-					<Switcher name='{{filters}}'>{{id}}</Switcher>
+					<Switcher name='{{~/filters}}' id="{{id}}">{{id}}</Switcher>
 				{{/each}}`,
 			data () {
 				return { things, filters: [ 2, 4 ] };

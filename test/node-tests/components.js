@@ -6,7 +6,7 @@ QUnit.test( 'should render in a non-DOM environment', function ( assert ) {
 	});
 
 	var ractive = new Ractive({
-		template: '<widget/>',
+		template: '<widget bar="{{bar}}"/>',
 		data: {
 			bar: 'baz'
 		},

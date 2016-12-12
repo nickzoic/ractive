@@ -259,7 +259,7 @@ export default function() {
 
 		info.link( '.baz', '~/str' );
 		t.equal( r.get( 'str' ), 'hello' );
-		info.unlink( 'str' );
+		info.unlink( '~/str' );
 		info.set( '.baz', 'yep' );
 		t.ok( r.get( 'str' ) !== 'yep' );
 	});

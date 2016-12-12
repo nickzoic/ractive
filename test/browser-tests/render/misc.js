@@ -91,7 +91,7 @@ export default function() {
 			template: `
 			{{#step}}
 			{{#options}}
-			<input type='radio' name='{{responses[step.name]}}' value='{{.}}'/>
+			<input type='radio' name='{{~/responses[../../name]}}' value='{{.}}'/>
 			{{/}}
 			{{/}}`,
 			data: {

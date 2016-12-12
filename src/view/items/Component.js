@@ -255,15 +255,11 @@ export default class Component extends Item {
 function addChild ( meta ) {
 	if ( this.item ) this.removeChild( this.item );
 
-	const child = meta.instance;
 	meta.anchor = this;
 
 	meta.parentFragment = this.parentFragment;
 	meta.name = meta.nameOption || this.name;
 	this.name = meta.name;
-
-
-	if ( !child.isolated ) child.viewmodel.attached( this.parentFragment );
 
 	// render as necessary
 	if ( this.rendered ) {

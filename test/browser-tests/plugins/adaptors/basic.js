@@ -219,26 +219,6 @@ export default function() {
 		t.ok( !obj.enabled, 'object property should not have been set, adaptor should have been used'	);
 	});
 
-	test( 'Components inherit modifyArrays option from environment (#1297)', t => {
-		const Widget = Ractive.extend({
-			template: '{{#each items}}{{this}}{{/each}}'
-		});
-
-		// YOUR CODE GOES HERE
-		const ractive = new Ractive({
-			el: fixture,
-			template: '<Widget/>',
-			data: {
-				items: [ 'a', 'b', 'c' ]
-			},
-			modifyArrays: false,
-			components: { Widget }
-		});
-
-		ractive.findComponent( 'Widget' ).get( 'items' ).push( 'd' );
-		t.htmlEqual( fixture.innerHTML, 'abc' );
-	});
-
 	test( 'Computed properties are adapted', t => {
 		function Value ( value ) {
 			this._ = value;

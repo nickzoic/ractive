@@ -145,11 +145,7 @@ export default class Transition {
 
 		// get expression args if supplied
 		if ( this.fn ) {
-			const values = resolveArgs( this, this.template, this.parentFragment ).map( model => {
-				if ( !model ) return undefined;
-
-				return model.get();
-			});
+			const values = resolveArgs( this, this.template, this.parentFragment ).map( model => model.get() );
 			return this.fn.apply( this.ractive, values );
 		}
 	}

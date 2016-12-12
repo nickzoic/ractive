@@ -931,30 +931,6 @@ export default function() {
 					desc: 'Objects and hashes should be pushed onto the context stack.'
 				},
 				{
-					name: 'Deeply Nested Contexts',
-					data: {
-						a: {
-							one: 1
-						},
-						b: {
-							two: 2
-						},
-						c: {
-							three: 3
-						},
-						d: {
-							four: 4
-						},
-						e: {
-							five: 5
-						}
-					},
-					expected: '1\n121\n12321\n1234321\n123454321\n1234321\n12321\n121\n1\n',
-					template: '{{#a}}\n{{one}}\n{{#b}}\n{{one}}{{two}}{{one}}\n{{#c}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{#d}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{#e}}\n{{one}}{{two}}{{three}}{{four}}{{five}}{{four}}{{three}}{{two}}{{one}}\n{{/e}}\n{{one}}{{two}}{{three}}{{four}}{{three}}{{two}}{{one}}\n{{/d}}\n{{one}}{{two}}{{three}}{{two}}{{one}}\n{{/c}}\n{{one}}{{two}}{{one}}\n{{/b}}\n{{one}}\n{{/a}}\n',
-					desc: `All elements on the context stack should be accessible.`,
-					oldIe: true
-				},
-				{
 					name: 'List',
 					data: {
 						list: [

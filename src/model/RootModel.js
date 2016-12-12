@@ -5,7 +5,6 @@ import { handleChange, mark } from '../shared/methodCallers';
 import RactiveModel from './specials/RactiveModel';
 import SharedModel, { GlobalModel } from './specials/SharedModel';
 import { splitKeypath, unescapeKey } from '../shared/keypaths';
-import resolveReference from '../view/resolvers/resolveReference';
 import noop from '../utils/noop';
 
 const hasProp = Object.prototype.hasOwnProperty;
@@ -29,10 +28,6 @@ export default class RootModel extends Model {
 		this.computations = {};
 	}
 
-	attached ( fragment ) {
-		attachImplicits( this, fragment );
-	}
-
 	compute ( key, signature ) {
 		const computation = new Computation( this, signature, key );
 		this.computations[ key ] = computation;
@@ -50,10 +45,6 @@ export default class RootModel extends Model {
 		}
 
 		return model.link( target, targetPath, options );
-	}
-
-	detached () {
-		detachImplicits( this );
 	}
 
 	get ( shouldCapture, options ) {
@@ -134,12 +125,6 @@ export default class RootModel extends Model {
 		       super.joinKey( key, opts );
 	}
 
-	// TODO: this should go away
-	map ( localKey, origin, options ) {
-		const local = this.joinKey( localKey );
-		local.link( origin, localKey, options );
-	}
-
 	set ( value ) {
 		// TODO wrapping root node is a baaaad idea. We should prevent this
 		const wrapper = this.wrapper;
@@ -159,7 +144,6 @@ export default class RootModel extends Model {
 
 		this.deps.forEach( handleChange );
 		this.children.forEach( mark );
-		this.clearUnresolveds(); // TODO do we need to do this with primitive values? if not, what about e.g. unresolved `length` property of null -> string?
 	}
 
 	retrieve () {
@@ -174,40 +158,3 @@ export default class RootModel extends Model {
 	}
 }
 RootModel.prototype.update = noop;
-
-function attachImplicits ( model, fragment ) {
-	if ( model._link && model._link.implicit && model._link.isDetached() ) {
-		model.attach( fragment );
-	}
-
-	// look for unresolveds
-	let i = model.unresolved.length;
-	while ( i-- ) {
-		const mdl = resolveReference( fragment, model.unresolved[i] );
-		if ( mdl ) {
-			model.joinKey( mdl.key ).link( mdl, mdl.key, { implicit: true } );
-		}
-	}
-
-	// look for virtual children to relink and cascade
-	for ( const k in model.childByKey ) {
-		if ( k in model.value ) {
-			attachImplicits( model.childByKey[k], fragment );
-		} else if ( !model.childByKey[k]._link || model.childByKey[k]._link.isDetached() ) {
-			const mdl = resolveReference( fragment, k );
-			if ( mdl ) {
-				model.childByKey[k].link( mdl, k, { implicit: true } );
-			}
-		}
-	}
-}
-
-function detachImplicits ( model ) {
-	if ( model._link && model._link.implicit ) {
-		model.unlink();
-	}
-
-	for ( const k in model.childByKey ) {
-		detachImplicits( model.childByKey[k] );
-	}
-}

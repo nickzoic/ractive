@@ -22,6 +22,7 @@ export default class Mustache extends Item {
 		const start = this.containerFragment || this.parentFragment;
 		// try to find a model for this view
 		const model = resolve( start, this.template );
+		// aliases are mustaches without a main value... perhaps that should change
 		const value = model ? model.get() : undefined;
 
 		if ( this.isStatic ) {
@@ -29,18 +30,8 @@ export default class Mustache extends Item {
 			return;
 		}
 
-		if ( model ) {
-			model.register( this );
-			this.model = model;
-		} else {
-			this.resolver = start.resolve( this.template.r, model => {
-				this.model = model;
-				model.register( this );
-
-				this.handleChange();
-				this.resolver = null;
-			});
-		}
+		if ( model ) model.register( this );
+		this.model = model;
 	}
 
 	handleChange () {
@@ -64,7 +55,6 @@ export default class Mustache extends Item {
 		if ( !this.isStatic ) {
 			this.model && this.model.unregister( this );
 			this.model = undefined;
-			this.resolver && this.resolver.unbind();
 		}
 	}
 }

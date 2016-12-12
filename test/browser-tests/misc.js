@@ -386,7 +386,7 @@ export default function() {
 		const items = [{}];
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items}}<p>foo</p>{{# items.length > 1 }}<p>bar</p>{{/}}{{/items}}',
+			template: '{{#items}}<p>foo</p>{{# ../length > 1 }}<p>bar</p>{{/}}{{/items}}',
 			data: { items }
 		});
 
@@ -875,7 +875,7 @@ export default function() {
 			el: fixture,
 			template: `
 				{{# steps[currentStep] }}
-					{{#if bool}}
+					{{#if ~/bool}}
 						some text
 						<!-- this is needed! -->
 					{{/if}}
@@ -907,7 +907,7 @@ export default function() {
 			el: fixture,
 			template: `
 				{{# steps[currentStep] }}
-					<p>{{currentStep}}: {{name}}</p>
+					<p>{{~/currentStep}}: {{name}}</p>
 				{{/}}`,
 			data: {
 				currentStep: 0,
@@ -1327,9 +1327,6 @@ export default function() {
 		t.equal( b1.resolve(), 'bars.0' );
 		t.equal( b2.resolve(), 'bars.1' );
 
-		t.equal( span1.get( 'i' ), undefined );
-		t.equal( span2.get( 'i' ), 0 );
-		t.equal( span3.get( 'i' ), 1 );
 		t.equal( b1.get( 'i' ), 0 );
 		t.equal( b2.get( 'i' ), 1 );
 

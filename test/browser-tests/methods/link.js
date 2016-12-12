@@ -91,7 +91,7 @@ export default function() {
 				bar: Ractive.extend({
 					template: '{{baz}}',
 					onrender() {
-						this.link( 'bip.bop', 'baz' );
+						this.link( 'bip.bop', 'baz', { ractive: this.parent } );
 					}
 				})
 			},

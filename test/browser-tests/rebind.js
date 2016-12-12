@@ -10,7 +10,7 @@ export default function() {
 
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items}}{{format(.)}}{{/items}}',
+			template: '{{#items}}{{~/format(.)}}{{/items}}',
 			data: {
 				items: [],
 				format () {
@@ -26,7 +26,7 @@ export default function() {
 	test( 'Section with item index ref expression changes correctly', t => {
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#items:i}}{{format(.,i)}},{{/items}}',
+			template: '{{#items:i}}{{~/format(.,i)}},{{/items}}',
 			data: {
 				items: [ 1, 2, 3, 4, 5 ],
 				format ( x, i ) {
@@ -46,7 +46,7 @@ export default function() {
 	test( 'Section updates child keypath expression', t => {
 		const ractive = new Ractive({
 			el: fixture,
-			template: '{{#each items:i}}{{foo[bar]}},{{/each}}',
+			template: '{{#each items:i}}{{foo[~/bar]}},{{/each}}',
 			data: {
 				bar: 'name',
 				items: [
@@ -69,7 +69,7 @@ export default function() {
 			template: `
 				{{#model:i}}{{#thing}}
 					{{# .inner.length > 1}}
-						<p>{{{format(inner)}}}</p>
+						<p>{{{~/format(inner)}}}</p>
 					{{/ inner}}
 				{{/thing}}{{/model}}`,
 			data: {

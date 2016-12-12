@@ -270,7 +270,7 @@ const renderTests = [
 		data: {
 			numbers: [ 1, 2, 3, 4 ],
 			total ( numbers ) {
-				return numbers.reduce( function ( prev, curr ) {
+				return numbers.reduce( ( prev, curr ) => {
 					return prev + curr;
 				}, 0 );
 			}
@@ -329,7 +329,7 @@ const renderTests = [
 	},
 	{
 		name: 'Expression with implicit iterator',
-		template: '<ul>{{#items}}<li>{{( uppercase( . ) )}}</li>{{/items}}</ul>',
+		template: '<ul>{{#items}}<li>{{( ~/uppercase( . ) )}}</li>{{/items}}</ul>',
 		data: { items: [ 'a', 'b', 'c' ], uppercase ( str ) { return str.toUpperCase(); } },
 		result: '<ul><li>A</li><li>B</li><li>C</li></ul>',
 		new_data: { items: [ 'd', 'e', 'f' ]},
@@ -349,7 +349,7 @@ const renderTests = [
 	},
 	{
 		name: 'Restricted references',
-		template: '<pre>{{#foo}}{{bar}} {{.bar}} {{./bar}} {{baz}} {{.baz}} {{./baz}}{{/foo}}</pre>',
+		template: '<pre>{{#foo}}{{bar}} {{.bar}} {{./bar}} {{~/baz}} {{.baz}} {{./baz}}{{/foo}}</pre>',
 		data: { bar: 'bartop', baz: 'baztop', foo: { bar: 'barfoo' } },
 		result: '<pre>barfoo barfoo barfoo baztop  </pre>'
 	},
@@ -572,7 +572,7 @@ const renderTests = [
 	},
 	{
 		name: 'Nested keypath expression with top level unresolved',
-		template: '{{#item}}{{foo[bar]}}{{/}}',
+		template: '{{#item}}{{foo[~/bar]}}{{/}}',
 		data: { bar: 'boo' },
 		result: '',
 		new_data: { item: { foo: { boo: 'bizz' } } },
@@ -692,7 +692,7 @@ const renderTests = [
 	},
 	{
 		name: '@index can be used in a reference expression',
-		template: '{{#each items}}<p>{{items[@index]}} - {{items[@index+1]}}</p>{{/each}}',
+		template: '{{#each items}}<p>{{~/items[@index]}} - {{~/items[@index+1]}}</p>{{/each}}',
 		data: { items: [ 'a', 'b', 'c' ] },
 		result: '<p>a - b</p><p>b - c</p><p>c - </p>'
 	},
@@ -856,7 +856,7 @@ const renderTests = [
 	},
 	{
 		name: 'Double-rendering bug (#748) is prevented',
-		template: '{{#foo}}{{#f(this)}}{{this}}{{/f}}{{/foo}}',
+		template: '{{#foo}}{{#~/f(this)}}{{this}}{{/f}}{{/foo}}',
 		data: {
 			foo: [
 				[ 2, 1, 4, 3 ]
@@ -1191,7 +1191,7 @@ const renderTests = [
 			function child () {}
 			child.prototype = new parent();
 
-			let data = new child();
+			const data = new child();
 			data.items = [data];
 
 			return data;
@@ -1406,14 +1406,14 @@ if ( !phantom ) {
 		new_data: { width: 200 },
 		new_result: `<img style="width: 100px;${ phantom ? ' ' : '' }">`
 	},
-	{
-		name: 'Section in attribute',
-		template: '<div style="{{#red}}color: red;{{/}}">{{#red}}is red{{/red}}</div>',
-		data: { red: true },
-		result: `<div style="color: red;${ phantom ? ' ' : '' }">is red</div>`,
-		new_data: { red: false },
-		new_result: '<div style=""></div>'
-	});
+		{
+			name: 'Section in attribute',
+			template: '<div style="{{#red}}color: red;{{/}}">{{#red}}is red{{/red}}</div>',
+			data: { red: true },
+			result: `<div style="color: red;${ phantom ? ' ' : '' }">is red</div>`,
+			new_data: { red: false },
+			new_result: '<div style=""></div>'
+		});
 }
 
 if ( ie ) {
@@ -1422,7 +1422,7 @@ if ( ie ) {
 		name: 'Section with descendant value attributes',
 		template: `{{#todos}}<li><label>{{todo}}</label><input value='{{todo}}'></li>{{/todos}}`,
 		data: {
-			todos: [{todo:"debug Ractive"},{todo:"release Ractive"}]
+			todos: [{todo:'debug Ractive'},{todo:'release Ractive'}]
 		},
 		result: `<li><label>debug Ractive</label><input></li><li><label>release Ractive</label><input></li>`
 	});

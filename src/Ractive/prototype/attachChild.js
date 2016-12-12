@@ -55,7 +55,6 @@ export default function attachChild ( child, options = {} ) {
 		this.merge( `@this.children.byName.${meta.target}` );
 		updateAnchors( this, meta.target );
 	} else {
-		if ( !child.isolated ) child.viewmodel.attached( this.fragment );
 		if ( child.fragment.rendered ) {
 			child.findAll( '*' ).forEach( el => updateLiveQueries( el._ractive.proxy ) );
 			child.findAllComponents().forEach( cmp => updateLiveComponentQueries( cmp.component ) );

@@ -3,7 +3,6 @@ import KeypathModel from './specials/KeypathModel';
 import { capture } from '../global/capture';
 import { handleChange, marked, markedAll, notifiedUpstream, teardown } from '../shared/methodCallers';
 import { rebindMatch } from '../shared/rebind';
-import resolveReference from '../view/resolvers/resolveReference';
 import noop from '../utils/noop';
 
 // temporary placeholder target for detached implicit links
@@ -48,19 +47,6 @@ export default class LinkModel extends ModelBase {
 		this.target.applyValue( value );
 	}
 
-	attach ( fragment ) {
-		const model = resolveReference( fragment, this.key );
-		if ( model ) {
-			this.relinking( model, true, false );
-		} else { // if there is no link available, move everything here to real models
-			this.owner.unlink();
-		}
-	}
-
-	detach () {
-		this.relinking( Missing, true, false );
-	}
-
 	get ( shouldCapture, opts = {} ) {
 		if ( shouldCapture ) {
 			capture( this );
@@ -93,8 +79,6 @@ export default class LinkModel extends ModelBase {
 		this.notifyUpstream();
 	}
 
-	isDetached () { return this.virtual && this.target === Missing; }
-
 	joinKey ( key ) {
 		// TODO: handle nested links
 		if ( key === undefined || key === '' ) return this;
@@ -118,7 +102,6 @@ export default class LinkModel extends ModelBase {
 		this.links.forEach( marked );
 
 		this.deps.forEach( handleChange );
-		this.clearUnresolveds();
 	}
 
 	markedAll () {
@@ -183,17 +166,14 @@ export default class LinkModel extends ModelBase {
 	}
 }
 
-ModelBase.prototype.link = function link ( model, keypath, options ) {
+ModelBase.prototype.link = function link ( model, keypath ) {
 	const lnk = this._link || new LinkModel( this.parent, this, model, this.key );
-	lnk.implicit = options && options.implicit;
 	lnk.sourcePath = keypath;
 	if ( this._link ) this._link.relinking( model, true, false );
 	this.rebind( lnk, this, false );
 	fireShuffleTasks();
 
-	const unresolved = !this._link;
 	this._link = lnk;
-	if ( unresolved && this.parent ) this.parent.clearUnresolveds();
 	lnk.marked();
 	return lnk;
 };

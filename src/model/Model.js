@@ -136,9 +136,6 @@ export default class Model extends ModelBase {
 			this.adapt();
 		}
 
-		this.parent.clearUnresolveds();
-		this.clearUnresolveds();
-
 		// keep track of array length
 		if ( isArray( value ) ) this.length = value.length;
 
@@ -214,7 +211,6 @@ export default class Model extends ModelBase {
 			this.links.forEach( marked );
 
 			this.deps.forEach( handleChange );
-			this.clearUnresolveds();
 		}
 	}
 

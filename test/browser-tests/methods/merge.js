@@ -281,7 +281,7 @@ export default function() {
 			template: `
 				<ul>
 					{{#list:i}}
-						<li>{{.}}: {{#list}}{{.}}{{/}}</li>
+						<li>{{.}}: {{#~/list}}{{.}}{{/}}</li>
 					{{/list}}
 				</ul>`,
 			data: {

@@ -107,7 +107,7 @@ export default function() {
 
 	test( 'resetting a nested component should find the correct anchor when rendering (#2695)', t => {
 		const cmp1 = Ractive.extend({
-			template: '<cmp/>',
+			template: '<cmp cmp="{{cmp}}" />',
 			components: {
 				cmp () { return this.get('cmp') || 'cmp2'; }
 			}
@@ -116,7 +116,7 @@ export default function() {
 		const cmp3 = Ractive.extend({ template: 'second' });
 		const r = new Ractive({
 			el: fixture,
-			template: 'the <cmp1/> place',
+			template: 'the <cmp1 cmp="{{cmp}}" /> place',
 			components: { cmp1, cmp2, cmp3 }
 		});
 

@@ -23,7 +23,6 @@ export default {
 	computed:               {},
 	syncComputedChildren:   false,
 	resolveInstanceMembers: true,
-	warnAboutAmbiguity:     false,
 	adapt:                  [],
 	twoway:                 true,
 	lazy:                   false,

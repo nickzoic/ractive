@@ -236,20 +236,6 @@ export default function() {
 		t.htmlEqual( fixture.innerHTML, '@shared.foo bar' );
 	});
 
-	test( 'by default instance members resolve after ambiguous context', t => {
-		new Ractive({
-			target: fixture,
-			template: '{{foo}} {{#with 1 as foo}}{{foo}}{{/with}} {{#with bar}}{{#with ~/other}}{{foo}}{{/with}}{{/with}}',
-			data: {
-				bar: { foo: 'yep' },
-				other: {}
-			},
-			foo: 'hey'
-		});
-
-		t.htmlEqual( fixture.innerHTML, 'hey 1 yep' );
-	});
-
 	test( 'instance members are not resolved if resolveInstanceMembers is false', t => {
 		new Ractive({
 			target: fixture,
@@ -259,38 +245,6 @@ export default function() {
 		});
 
 		t.htmlEqual( fixture.innerHTML, '?' );
-	});
-
-	test( 'if asked, ractive will issue warnings about ambiguous references', t => {
-		t.expect( 4 );
-
-		onWarn( w => {
-			t.ok( /resolved.*is ambiguous/.test( w ) );
-			onWarn( w => {
-				t.ok( /resolved.*is ambiguous and will create a mapping/.test( w ) );
-				onWarn( w => {
-					t.ok( /is ambiguous and did not resolve/.test( w ) );
-				});
-			});
-		});
-
-		const cmp = Ractive.extend({
-			template: '{{foo}}',
-			warnAboutAmbiguity: true
-		});
-		new Ractive({
-			target: fixture,
-			template: '{{#with some}}{{#with ~/other}}{{foo}}{{/with}}{{/with}}<cmp />{{nope}}',
-			data: {
-				some: {},
-				other: {},
-				foo: 'yep'
-			},
-			components: { cmp },
-			warnAboutAmbiguity: true
-		});
-
-		t.htmlEqual( fixture.innerHTML, 'yepyep' );
 	});
 
 	test( 'component tree root data can be accessed with @.root.data (#2432)', t => {
