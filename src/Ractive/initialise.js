@@ -1,6 +1,7 @@
 import { logIfDebug, warnIfDebug, warnOnceIfDebug } from '../utils/log';
 import { getElement } from '../utils/dom';
-import { toPairs } from '../utils/object';
+import { isFunction, isObjectType } from '../utils/is';
+import { objectKeys, toPairs } from '../utils/object';
 import config from './config/config';
 import Fragment from '../view/Fragment';
 import Hook from '../events/Hook';
@@ -11,7 +12,7 @@ const configHook = new Hook( 'config' );
 const initHook = new HookQueue( 'init' );
 
 export default function initialise ( ractive, userOptions, options ) {
-	Object.keys( ractive.viewmodel.computations ).forEach( key => {
+	objectKeys( ractive.viewmodel.computations ).forEach( key => {
 		const computation = ractive.viewmodel.computations[ key ];
 
 		if ( ractive.viewmodel.value.hasOwnProperty( key ) ) {
@@ -81,9 +82,9 @@ function subscribe ( instance, options, type ) {
 	const single = type === 'on' ? 'once' : `${type}Once`;
 
 	subs.forEach( ([ target, config ]) => {
-		if ( typeof config === 'function' ) {
+		if ( isFunction( config ) ) {
 			instance[type]( target, config );
-		} else if ( typeof config === 'object' && typeof config.handler === 'function' ) {
+		} else if ( isObjectType( config ) && isFunction( config.handler ) ) {
 			instance[ config.once ? single : type ]( target, config.handler, config );
 		}
 	});

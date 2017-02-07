@@ -1,5 +1,6 @@
 import Element from '../../Element';
 import { removeFromArray } from '../../../../utils/array';
+import { isArray } from '../../../../utils/is';
 import findElement from '../../shared/findElement';
 
 export default class Option extends Element {
@@ -64,7 +65,7 @@ export default class Option extends Element {
 			return true;
 		}
 
-		if ( this.select.getAttribute( 'multiple' ) && Array.isArray( selectValue ) ) {
+		if ( this.select.getAttribute( 'multiple' ) && isArray( selectValue ) ) {
 			let i = selectValue.length;
 			while ( i-- ) {
 				if ( selectValue[i] == optionValue ) {

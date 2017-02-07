@@ -1,4 +1,5 @@
 import { TEMPLATE_VERSION } from '../config/template';
+import { objectKeys } from '../utils/object';
 import Parser from './Parser';
 import readMustache from './converters/readMustache';
 import readTriple from './converters/mustache/readTriple';
@@ -85,7 +86,7 @@ const StandardParser = Parser.extend({
 		if ( this.csp !== false ) {
 			const expr = {};
 			insertExpressions( result[0].t, expr );
-			if ( Object.keys( expr ).length ) result[0].e = expr;
+			if ( objectKeys( expr ).length ) result[0].e = expr;
 		}
 
 		return result[0];

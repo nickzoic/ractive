@@ -7,6 +7,7 @@ import SharedModel, { GlobalModel } from './specials/SharedModel';
 import { splitKeypath, escapeKey, unescapeKey } from '../shared/keypaths';
 import resolveReference from '../view/resolvers/resolveReference';
 import noop from '../utils/noop';
+import { objectKeys } from '../utils/object';
 
 const hasProp = Object.prototype.hasOwnProperty;
 
@@ -58,7 +59,7 @@ export default class RootModel extends Model {
 
 		if ( !options || options.virtual !== false ) {
 			const result = this.getVirtual();
-			const keys = Object.keys( this.computations );
+			const keys = objectKeys( this.computations );
 			let i = keys.length;
 			while ( i-- ) {
 				result[ keys[i] ] = this.computations[ keys[i] ].get();

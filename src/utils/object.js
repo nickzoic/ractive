@@ -21,3 +21,15 @@ export function toPairs ( obj = {} ) {
 	}
 	return pairs;
 }
+
+export function objectKeys ( obj ) {
+	return Object.keys( obj );
+}
+
+export function objectDefineProperty ( obj, name, prop ) {
+	Object.defineProperty( obj, name, prop );
+}
+
+export function objectDefineProperties ( obj, props ) {
+	Object.defineProperties( obj, props );
+}

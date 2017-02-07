@@ -1,4 +1,5 @@
 import { removeFromArray } from '../../utils/array';
+import { objectKeys } from '../../utils/object';
 import { handleChange } from '../../shared/methodCallers';
 import { capture } from '../../global/capture';
 
@@ -31,7 +32,7 @@ export default class KeypathModel {
 	}
 
 	handleChange () {
-		const keys = Object.keys( this.children );
+		const keys = objectKeys( this.children );
 		let i = keys.length;
 		while ( i-- ) {
 			this.children[ keys[i] ].handleChange();
@@ -41,7 +42,7 @@ export default class KeypathModel {
 	}
 
 	rebindChildren ( next ) {
-		const keys = Object.keys( this.children );
+		const keys = objectKeys( this.children );
 		let i = keys.length;
 		while ( i-- ) {
 			const child = this.children[keys[i]];
@@ -53,7 +54,7 @@ export default class KeypathModel {
 	rebind ( next, previous ) {
 		const model = next ? next.getKeypathModel( this.ractive ) : undefined;
 
-		const keys = Object.keys( this.children );
+		const keys = objectKeys( this.children );
 		let i = keys.length;
 		while ( i-- ) {
 			this.children[ keys[i] ].rebind( next, previous, false );
@@ -76,7 +77,7 @@ export default class KeypathModel {
 	teardown () {
 		if ( this.owner ) this.owner.removeChild( this );
 
-		const keys = Object.keys( this.children );
+		const keys = objectKeys( this.children );
 		let i = keys.length;
 		while ( i-- ) {
 			this.children[ keys[i] ].teardown();

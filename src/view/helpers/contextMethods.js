@@ -1,6 +1,7 @@
 import resolveReference from '../resolvers/resolveReference';
 import { set as sharedSet } from '../../shared/set';
-import { isNumeric, isObject } from '../../utils/is';
+import { isNumeric, isObject, isString } from '../../utils/is';
+import { objectDefineProperties } from '../../utils/object';
 import makeArrayMethod from '../../Ractive/prototype/shared/makeArrayMethod';
 import { animate as protoAnimate } from '../../Ractive/prototype/animate';
 import { merge as protoMerge } from '../../Ractive/prototype/merge';
@@ -53,7 +54,7 @@ function resolve ( path, ractive ) {
 function findModel ( el, path ) {
 	const frag = el.proxy.parentFragment;
 
-	if ( typeof path !== 'string' ) {
+	if ( !isString( path ) ) {
 		return { model: frag.findContext(), instance: path };
 	}
 
@@ -219,7 +220,7 @@ function setBinding ( value ) {
 }
 
 export function addHelpers ( obj, element ) {
-	Object.defineProperties( obj, {
+	objectDefineProperties( obj, {
 		proxy: { value: element, writable: true },
 		ractive: { value: element.parentFragment.ractive },
 		resolve: { value: resolve },

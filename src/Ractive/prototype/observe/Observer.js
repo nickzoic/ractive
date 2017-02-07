@@ -1,4 +1,4 @@
-import { isEqual } from '../../../utils/is';
+import { isEqual, isFunction } from '../../../utils/is';
 import { removeFromArray } from '../../../utils/array';
 import runloop from '../../../global/runloop';
 import { rebindMatch } from '../../../shared/rebind';
@@ -13,7 +13,7 @@ export default class Observer {
 
 		this.options = options;
 
-		if ( typeof options.old === 'function' ) {
+		if ( isFunction( options.old ) ) {
 			this.oldContext = Object.create( ractive );
 			this.old = options.old;
 		} else {

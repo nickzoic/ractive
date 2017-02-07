@@ -1,5 +1,6 @@
 import { ALIAS, ANCHOR, COMPONENT, DOCTYPE, ELEMENT, INTERPOLATOR, PARTIAL, SECTION, TRIPLE, YIELDER } from '../../config/types';
 import { ATTRIBUTE, BINDING_FLAG, DECORATOR, EVENT, TRANSITION } from '../../config/types';
+import { isString } from '../../utils/is';
 import Alias from './Alias';
 import Attribute from './element/Attribute';
 import BindingFlag from './element/BindingFlag';
@@ -50,7 +51,7 @@ const specialElements = {
 };
 
 export default function createItem ( options ) {
-	if ( typeof options.template === 'string' ) {
+	if ( isString( options.template ) ) {
 		return new Text( options );
 	}
 

@@ -11,6 +11,7 @@ import initialise from './Ractive/initialise';
 import { getCSS } from './global/css';
 import { escapeKey, unescapeKey } from './shared/keypaths';
 import { joinKeys, splitKeypath } from './Ractive/static/keypaths';
+import { objectDefineProperties } from './utils/object';
 
 export default function Ractive ( options ) {
 	if ( !( this instanceof Ractive ) ) return new Ractive( options );
@@ -40,7 +41,7 @@ Ractive.prototype.constructor = Ractive;
 Ractive.defaults = Ractive.prototype;
 
 // static properties
-Object.defineProperties( Ractive, {
+objectDefineProperties( Ractive, {
 
 	// debug flag
 	DEBUG:          { writable: true, value: true },

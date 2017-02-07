@@ -1,5 +1,6 @@
 import Element from '../../Element';
 import { toArray } from '../../../../utils/array';
+import { isArray } from '../../../../utils/is';
 import getSelectedOptions from '../../../../utils/getSelectedOptions';
 
 function valueContains ( selectValue, optionValue ) {
@@ -58,7 +59,7 @@ export default class Select extends Element {
 
 		const selectValue = this.getAttribute( 'value' );
 		const isMultiple = this.getAttribute( 'multiple' );
-		const array = isMultiple && Array.isArray( selectValue );
+		const array = isMultiple && isArray( selectValue );
 
 		// If the <select> has a specified value, that should override
 		// these options

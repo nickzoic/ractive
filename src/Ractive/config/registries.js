@@ -1,3 +1,5 @@
+import { objectKeys } from '../../utils/object';
+
 const registryNames = [
 	'adaptors',
 	'components',
@@ -44,7 +46,7 @@ class Registry {
 		const registry = ractive[ this.name ];
 		let changed = false;
 
-		Object.keys( registry ).forEach( key => {
+		objectKeys( registry ).forEach( key => {
 			const item = registry[ key ];
 
 			if ( item._fn ) {

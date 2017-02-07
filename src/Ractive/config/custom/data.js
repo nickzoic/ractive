@@ -1,13 +1,13 @@
 import { fatal, warnIfDebug, warnOnceIfDebug } from '../../../utils/log';
-import { isObject } from '../../../utils/is';
+import { isArray, isFunction, isObject, isObjectType } from '../../../utils/is';
 import bind from '../../../utils/bind';
 
 function validate ( data ) {
 	// Warn if userOptions.data is a non-POJO
 	if ( data && data.constructor !== Object ) {
-		if ( typeof data === 'function' ) {
+		if ( isFunction( data ) ) {
 			// TODO do we need to support this in the new Ractive() case?
-		} else if ( typeof data !== 'object' ) {
+		} else if ( !isObjectType( data ) ) {
 			fatal( `data option must be an object or a function, \`${data}\` is not valid` );
 		} else {
 			warnIfDebug( 'If supplied, options.data should be a plain JavaScript object - using a non-POJO as the root object may work, but is discouraged' );
@@ -27,8 +27,8 @@ export default {
 			for ( key in options.data ) {
 				value = options.data[ key ];
 
-				if ( value && typeof value === 'object' ) {
-					if ( isObject( value ) || Array.isArray( value ) ) {
+				if ( value && isObjectType( value ) ) {
+					if ( isObject( value ) || isArray( value ) ) {
 						warnIfDebug( `Passing a \`data\` option with object and array properties to Ractive.extend() is discouraged, as mutating them is likely to cause bugs. Consider using a data function instead:
 
   // this...
@@ -53,13 +53,13 @@ export default {
 	init: ( Parent, ractive, options ) => {
 		let result = combine( Parent.prototype.data, options.data );
 
-		if ( typeof result === 'function' ) result = result.call( ractive );
+		if ( isFunction( result ) ) result = result.call( ractive );
 
 		// bind functions to the ractive instance at the top level,
 		// unless it's a non-POJO (in which case alarm bells should ring)
 		if ( result && result.constructor === Object ) {
 			for ( const prop in result ) {
-				if ( typeof result[ prop ] === 'function' ) {
+				if ( isFunction( result[prop] ) ) {
 					const value = result[ prop ];
 					result[ prop ] = bind( value, ractive );
 					result[ prop ]._r_unbound = value;
@@ -80,8 +80,8 @@ export default {
 function combine ( parentValue, childValue ) {
 	validate( childValue );
 
-	const parentIsFn = typeof parentValue === 'function';
-	const childIsFn = typeof childValue === 'function';
+	const parentIsFn = isFunction( parentValue );
+	const childIsFn = isFunction( childValue );
 
 	// Very important, otherwise child instance can become
 	// the default data object on Ractive or a component.
@@ -109,7 +109,7 @@ function callDataFunction ( fn, context ) {
 
 	if ( !data ) return;
 
-	if ( typeof data !== 'object' ) {
+	if ( !isObjectType( data ) ) {
 		fatal( 'Data function must return an object' );
 	}
 

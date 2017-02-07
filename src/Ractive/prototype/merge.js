@@ -1,14 +1,15 @@
 import { splitKeypath } from '../../shared/keypaths';
 import runloop from '../../global/runloop';
+import { isArray, isFunction, isString } from '../../utils/is';
 
 const comparators = {};
 
 function getComparator ( option ) {
 	if ( !option ) return null; // use existing arrays
 	if ( option === true ) return JSON.stringify;
-	if ( typeof option === 'function' ) return option;
+	if ( isFunction( option ) ) return option;
 
-	if ( typeof option === 'string' ) {
+	if ( isString( option ) ) {
 		return comparators[ option ] || ( comparators[ option ] = thing => thing[ option ] );
 	}
 
@@ -20,7 +21,7 @@ export function merge ( ractive, model, array, options ) {
 	const value = model.get();
 	if ( array === undefined ) array = value;
 
-	if ( !Array.isArray( value ) || !Array.isArray( array ) ) {
+	if ( !isArray( value ) || !isArray( array ) ) {
 		throw new Error( 'You cannot merge an array with a non-array' );
 	}
 

@@ -1,7 +1,8 @@
 import staticInfo from '../static/getNodeInfo';
+import { isString } from '../../utils/is';
 
 export default function getNodeInfo( node, options ) {
-	if ( typeof node === 'string' ) {
+	if ( isString( node ) ) {
 		node = this.find( node, options );
 	}
 

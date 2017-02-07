@@ -1,6 +1,7 @@
 import { INTERPOLATOR } from '../../../config/types';
 import Item from '../shared/Item';
 import { warnOnceIfDebug } from '../../../utils/log';
+import { isArray, isString } from '../../../utils/is';
 import Fragment from '../../Fragment';
 import findElement from '../shared/findElement';
 import parseJSON from '../../../utils/parseJSON';
@@ -38,12 +39,12 @@ export default class Mapping extends Item {
 			viewmodel.joinKey( this.name ).set( true );
 		}
 
-		else if ( typeof template === 'string' ) {
+		else if ( isString( template ) ) {
 			const parsed = parseJSON( template );
 			viewmodel.joinKey( this.name ).set( parsed ? parsed.value : template );
 		}
 
-		else if ( Array.isArray( template ) ) {
+		else if ( isArray( template ) ) {
 			createMapping( this, true );
 		}
 	}

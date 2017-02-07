@@ -1,4 +1,6 @@
 import { warnIfDebug } from '../../utils/log';
+import { isFunction } from '../../utils/is';
+import { objectKeys } from '../../utils/object';
 import adaptConfigurator from './custom/adapt';
 import cssConfigurator from './custom/css/css';
 import dataConfigurator from './custom/data';
@@ -16,7 +18,7 @@ const custom = {
 	template: templateConfigurator
 };
 
-const defaultKeys = Object.keys( defaults );
+const defaultKeys = objectKeys( defaults );
 
 const isStandardKey = makeObj( defaultKeys.filter( key => !custom[ key ] ) );
 
@@ -59,7 +61,7 @@ function configure ( method, Parent, target, options ) {
 			// NOTE: we allow some functions on "el" because we duck type element lists
 			// and some libraries or ef'ed-up virtual browsers (phantomJS) return a
 			// function object as the result of querySelector methods
-			if ( key !== 'el' && typeof value === 'function' ) {
+			if ( key !== 'el' && isFunction( value ) ) {
 				warnIfDebug( `${ key } is a Ractive option that does not expect a function and will be ignored`,
 					method === 'init' ? target : null );
 			}
@@ -92,7 +94,7 @@ function extendOtherMethods ( parent, target, options ) {
 			let member = options[ key ];
 
 			// if this is a method that overwrites a method, wrap it:
-			if ( typeof member === 'function' ) {
+			if ( isFunction( member ) ) {
 				if ( key in RactiveProto && !_super.test( member.toString() ) ) {
 					warnIfDebug( `Overriding Ractive prototype function '${key}' without calling the '${_super}' method can be very dangerous.` );
 				}

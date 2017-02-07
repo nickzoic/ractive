@@ -1,4 +1,5 @@
-import { toPairs } from '../utils/object';
+import { objectDefineProperties, toPairs } from '../utils/object';
+import { isArray } from '../utils/is';
 import config from '../Ractive/config/config';
 import dataConfigurator from '../Ractive/config/custom/data';
 import construct from '../Ractive/construct';
@@ -38,7 +39,7 @@ function extendOne ( Parent, options = {} ) {
 	proto.constructor = Child;
 
 	// Static properties
-	Object.defineProperties( Child, {
+	objectDefineProperties( Child, {
 		// alias prototype as defaults
 		defaults: { value: proto },
 
@@ -61,15 +62,15 @@ function extendOne ( Parent, options = {} ) {
 		let attrs;
 
 		// allow an array of optional props or an object with arrays for optional and required props
-		if ( Array.isArray( options.attributes ) ) {
+		if ( isArray( options.attributes ) ) {
 			attrs = { optional: options.attributes, required: [] };
 		} else {
 			attrs = options.attributes;
 		}
 
 		// make sure the requisite keys actually store arrays
-		if ( !Array.isArray( attrs.required ) ) attrs.required = [];
-		if ( !Array.isArray( attrs.optional ) ) attrs.optional = [];
+		if ( !isArray( attrs.required ) ) attrs.required = [];
+		if ( !isArray( attrs.optional ) ) attrs.optional = [];
 
 		Child.attributes = attrs;
 	}

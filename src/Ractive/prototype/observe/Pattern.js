@@ -1,6 +1,7 @@
 import { escapeKey } from '../../../shared/keypaths';
 import { removeFromArray } from '../../../utils/array';
-import { isEqual } from '../../../utils/is';
+import { isArray, isEqual } from '../../../utils/is';
+import { objectKeys } from '../../../utils/object';
 import runloop from '../../../global/runloop';
 
 const star = /\*+/g;
@@ -54,7 +55,7 @@ export default class PatternObserver {
 	dispatch () {
 		const newValues = this.newValues;
 		this.newValues = {};
-		Object.keys( newValues ).forEach( keypath => {
+		objectKeys( newValues ).forEach( keypath => {
 			if ( this.newKeys && !this.newKeys[ keypath ] ) return;
 
 			const newValue = newValues[ keypath ];
@@ -91,7 +92,7 @@ export default class PatternObserver {
 	}
 
 	shuffle ( newIndices ) {
-		if ( !Array.isArray( this.baseModel.value ) ) return;
+		if ( !isArray( this.baseModel.value ) ) return;
 
 		const base = this.baseKeypath = this.baseModel.getKeypath( this.ractive );
 		const max = this.baseModel.value.length;

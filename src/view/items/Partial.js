@@ -1,5 +1,6 @@
 import { SECTION, SECTION_WITH, YIELDER } from '../../config/types';
 import { warnOnceIfDebug, warnIfDebug } from '../../utils/log';
+import { isArray, isObjectType, isString } from '../../utils/is';
 import { MustacheContainer } from './shared/Mustache';
 import Fragment from '../Fragment';
 import getPartialTemplate from './partial/getPartialTemplate';
@@ -40,7 +41,7 @@ export default class Partial extends MustacheContainer {
 
 		if ( !template ) {
 			super.bind();
-			if ( this.model && ( templateObj = this.model.get() ) && typeof templateObj === 'object' && ( typeof templateObj.template === 'string' || Array.isArray( templateObj.t ) ) ) {
+			if ( this.model && ( templateObj = this.model.get() ) && isObjectType( templateObj ) && ( isString( templateObj.template ) || isArray( templateObj.t ) ) ) {
 				if ( templateObj.template ) {
 					this.source = templateObj.template;
 					templateObj = parsePartial( this.template.r, templateObj.template, this.ractive );
@@ -48,7 +49,7 @@ export default class Partial extends MustacheContainer {
 					this.source = templateObj.t;
 				}
 				this.setTemplate( this.template.r, templateObj.t );
-			} else if ( ( !this.model || typeof this.model.get() !== 'string' ) && this.refName ) {
+			} else if ( ( !this.model || !isString( this.model.get() ) ) && this.refName ) {
 				this.setTemplate( this.refName, template );
 			} else {
 				this.setTemplate( this.model.get() );
@@ -158,7 +159,7 @@ export default class Partial extends MustacheContainer {
 				if ( template && typeof template === 'string' && template !== this.name ) {
 					this.setTemplate( template );
 					this.fragment.resetTemplate( this.partialTemplate );
-				} else if ( template && typeof template === 'object' && ( typeof template.template === 'string' || Array.isArray( template.t ) ) ) {
+				} else if ( template && isObjectType( template ) && ( isString( template.template ) || isArray( template.t ) ) ) {
 					if ( template.t !== this.source && template.template !== this.source ) {
 						if ( template.template ) {
 							this.source = template.template;

@@ -1,9 +1,9 @@
-import { isObject } from '../../utils/is';
+import { isFunction, isObject } from '../../utils/is';
 
 const onceOptions = { init: false, once: true };
 
 export default function observeOnce ( keypath, callback, options ) {
-	if ( isObject( keypath ) || typeof keypath === 'function' ) {
+	if ( isObject( keypath ) || isFunction( keypath ) ) {
 		options = Object.assign( callback || {}, onceOptions );
 		return this.observe( keypath, options );
 	}

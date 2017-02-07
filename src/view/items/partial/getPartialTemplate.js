@@ -1,5 +1,6 @@
 import { noRegistryFunctionReturn } from '../../../config/errors';
 import { warnIfDebug } from '../../../utils/log';
+import { isFunction } from '../../../utils/is';
 import parser from '../../../Ractive/config/runtime-parser';
 import { findInstance } from '../../../shared/registry';
 import { fillGaps } from '../../../utils/object';
@@ -37,7 +38,7 @@ function getPartialFromRegistry ( ractive, name, parentFragment ) {
 
 	// partial is a function?
 	let fn;
-	if ( typeof partial === 'function' ) {
+	if ( isFunction( partial ) ) {
 		fn = partial.bind( instance );
 		fn.isOwner = instance.partials.hasOwnProperty(name);
 		partial = fn.call( ractive, parser );

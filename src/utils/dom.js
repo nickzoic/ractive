@@ -1,5 +1,6 @@
 import { isClient, svg, vendors, win, doc } from '../config/environment';
 import { html } from '../config/namespaces';
+import { isString } from './is';
 
 let createElement, matches, div, methodNames, unprefixed, prefixed, i, j, makeFunction;
 
@@ -47,7 +48,7 @@ function getElement ( input ) {
 	}
 
 	// Get node from string
-	if ( typeof input === 'string' ) {
+	if ( isString( input ) ) {
 		// try ID first
 		output = doc.getElementById( input );
 

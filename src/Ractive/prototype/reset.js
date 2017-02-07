@@ -2,6 +2,7 @@ import config from '../config/config';
 import Hook from '../../events/Hook';
 import runloop from '../../global/runloop';
 import dataConfigurator from '../config/custom/data';
+import { isObjectType } from '../../utils/is';
 
 const shouldRerender = [ 'template', 'partials', 'components', 'decorators', 'events' ];
 
@@ -13,7 +14,7 @@ const unrenderHook = new Hook( 'unrender' );
 export default function Ractive$reset ( data ) {
 	data = data || {};
 
-	if ( typeof data !== 'object' ) {
+	if ( !isObjectType( data ) ) {
 		throw new Error( 'The reset method takes either no arguments, or an object containing new data' );
 	}
 

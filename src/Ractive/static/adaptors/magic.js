@@ -1,13 +1,15 @@
 import { escapeKey } from '../../../shared/keypaths';
+import { isObjectType } from '../../../utils/is';
+import { objectDefineProperty, objectKeys } from '../../../utils/object';
 
 let magicAdaptor;
 
 try {
-	Object.defineProperty({}, 'test', { get() {}, set() {} });
+	objectDefineProperty({}, 'test', { get() {}, set() {} });
 
 	magicAdaptor = {
 		filter ( value ) {
-			return value && typeof value === 'object';
+			return value && isObjectType( value );
 		},
 		wrap ( ractive, value, keypath ) {
 			return new MagicWrapper( ractive, value, keypath );
@@ -80,7 +82,7 @@ class MagicWrapper {
 		this.originalDescriptors = {};
 
 		// wrap all properties with getters
-		Object.keys( value ).forEach( key => {
+		objectKeys( value ).forEach( key => {
 			const originalDescriptor = Object.getOwnPropertyDescriptor( this.value, key );
 			this.originalDescriptors[ key ] = originalDescriptor;
 
@@ -90,7 +92,7 @@ class MagicWrapper {
 
 
 
-			Object.defineProperty( this.value, key, descriptor );
+			objectDefineProperty( this.value, key, descriptor );
 		});
 	}
 
@@ -107,14 +109,14 @@ class MagicWrapper {
 	}
 
 	teardown () {
-		Object.keys( this.value ).forEach( key => {
+		objectKeys( this.value ).forEach( key => {
 			const descriptor = Object.getOwnPropertyDescriptor( this.value, key );
 			if ( !descriptor.set || !descriptor.set.__magic ) return;
 
 			revert( descriptor );
 
 			if ( descriptor.set.__magic.dependants.length === 1 ) {
-				Object.defineProperty( this.value, key, descriptor.set.__magic.originalDescriptor );
+				objectDefineProperty( this.value, key, descriptor.set.__magic.originalDescriptor );
 			}
 		});
 	}

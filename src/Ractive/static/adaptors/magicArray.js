@@ -1,5 +1,6 @@
 import magicAdaptor from './magic';
 import arrayAdaptor from './array/index';
+import { objectDefineProperty } from '../../../utils/object';
 
 class MagicArrayWrapper {
 	constructor ( ractive, array, keypath ) {
@@ -12,7 +13,7 @@ class MagicArrayWrapper {
 		this.arrayWrapper.magic = this.magicWrapper;
 
 		// ugh, this really is a terrible hack
-		Object.defineProperty( this, '__model', {
+		objectDefineProperty( this, '__model', {
 			get () {
 				return this.arrayWrapper.__model;
 			},

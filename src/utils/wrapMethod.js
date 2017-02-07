@@ -1,3 +1,5 @@
+import { isFunction } from './is';
+
 export default function ( method, superMethod, force ) {
 
 	if ( force || needsSuper( method, superMethod ) )  {
@@ -25,5 +27,5 @@ export default function ( method, superMethod, force ) {
 }
 
 function needsSuper ( method, superMethod ) {
-	return typeof superMethod === 'function' && /_super/.test( method );
+	return isFunction( superMethod ) && /_super/.test( method );
 }

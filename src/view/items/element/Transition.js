@@ -1,5 +1,7 @@
 import { win } from '../../../config/environment';
 import { addToArray, removeFromArray } from '../../../utils/array';
+import { objectKeys } from '../../../utils/object';
+import { isArray, isFunction, isNumber, isString } from '../../../utils/is';
 import findElement from '../shared/findElement';
 import prefix from './transitions/prefix';
 import { warnOnceIfDebug } from '../../../utils/log';
@@ -45,7 +47,7 @@ export default class Transition {
 
 		let to;
 
-		if ( typeof style === 'string' ) {
+		if ( isString( style ) ) {
 			to = {};
 			to[ style ] = value;
 		} else {
@@ -74,7 +76,7 @@ export default class Transition {
 			}
 
 			// Get a list of the properties we're animating
-			const propertyNames = Object.keys( to );
+			const propertyNames = objectKeys( to );
 			const changedProperties = [];
 
 			// Store the current styles
@@ -125,7 +127,7 @@ export default class Transition {
 			this.params = options.params;
 		}
 
-		if ( typeof this.name === 'function' ) {
+		if ( isFunction( this.name ) ) {
 			this._fn = this.name;
 			this.name = this._fn.name;
 		} else {
@@ -156,12 +158,12 @@ export default class Transition {
 	getStyle ( props ) {
 		const computedStyle = getComputedStyle( this.node );
 
-		if ( typeof props === 'string' ) {
+		if ( isString( props ) ) {
 			const value = computedStyle[ prefix( props ) ];
 			return value === '0px' ? 0 : value;
 		}
 
-		if ( !Array.isArray( props ) ) {
+		if ( !isArray( props ) ) {
 			throw new Error( 'Transition$getStyle must be passed a string, or an array of strings representing CSS properties' );
 		}
 
@@ -180,11 +182,11 @@ export default class Transition {
 	}
 
 	processParams ( params, defaults ) {
-		if ( typeof params === 'number' ) {
+		if ( isNumber ( params ) ) {
 			params = { duration: params };
 		}
 
-		else if ( typeof params === 'string' ) {
+		else if ( isString( params ) ) {
 			if ( params === 'slow' ) {
 				params = { duration: 600 };
 			} else if ( params === 'fast' ) {
@@ -204,7 +206,7 @@ export default class Transition {
 	}
 
 	setStyle ( style, value ) {
-		if ( typeof style === 'string' ) {
+		if ( isString( style ) ) {
 			this.node.style[ prefix( style ) ] = value;
 		}
 

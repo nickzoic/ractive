@@ -1,4 +1,5 @@
-import { isObject } from '../../utils/is';
+import { isFunction, isObject } from '../../utils/is';
+import { objectKeys } from '../../utils/object';
 import { warnOnceIfDebug } from '../../utils/log';
 import { splitKeypath } from '../../shared/keypaths';
 import resolveReference from '../../view/resolvers/resolveReference';
@@ -15,7 +16,7 @@ export default function observe ( keypath, callback, options ) {
 		map = keypath;
 		opts = callback || {};
 	} else {
-		if ( typeof keypath === 'function' ) {
+		if ( isFunction( keypath ) ) {
 			map = { '': keypath };
 			opts = callback || {};
 		} else {
@@ -26,7 +27,7 @@ export default function observe ( keypath, callback, options ) {
 	}
 
 	let silent = false;
-	Object.keys( map ).forEach( keypath => {
+	objectKeys( map ).forEach( keypath => {
 		const callback = map[ keypath ];
 		const caller = function ( ...args ) {
 			if ( silent ) return;

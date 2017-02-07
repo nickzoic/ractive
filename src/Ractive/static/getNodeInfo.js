@@ -1,10 +1,11 @@
 import { addHelpers } from '../../view/helpers/contextMethods';
 import { doc } from '../../config/environment';
+import { isString } from '../../utils/is';
 
 const query = doc && doc.querySelector;
 
 export default function( node ) {
-	if ( typeof node === 'string' && query ) {
+	if ( isString( node ) && query ) {
 		node = query.call( document, node );
 	}
 

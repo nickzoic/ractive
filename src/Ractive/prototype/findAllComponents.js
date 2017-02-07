@@ -1,7 +1,8 @@
 import { getQuery } from './shared/Query';
+import { isObjectType } from '../../utils/is';
 
 export default function Ractive$findAllComponents ( selector, options ) {
-	if ( !options && typeof selector === 'object' ) {
+	if ( !options && isObjectType( selector ) ) {
 		options = selector;
 		selector = '';
 	}

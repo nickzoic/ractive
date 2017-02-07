@@ -3,7 +3,8 @@ import KeypathModel from './specials/KeypathModel';
 import { escapeKey, unescapeKey } from '../shared/keypaths';
 import { handleChange } from '../shared/methodCallers';
 import { addToArray, removeFromArray } from '../utils/array';
-import { isObject } from '../utils/is';
+import { isArray, isFunction, isObject } from '../utils/is';
+import { objectKeys } from '../utils/object';
 import bind from '../utils/bind';
 
 const hasProp = Object.prototype.hasOwnProperty;
@@ -79,7 +80,7 @@ export default class ModelBase {
 
 	getValueChildren ( value ) {
 		let children;
-		if ( Array.isArray( value ) ) {
+		if ( isArray( value ) ) {
 			children = [];
 			if ( 'length' in this && this.length !== value.length ) {
 				children.push( this.joinKey( 'length' ) );
@@ -89,8 +90,8 @@ export default class ModelBase {
 			});
 		}
 
-		else if ( isObject( value ) || typeof value === 'function' ) {
-			children = Object.keys( value ).map( key => this.joinKey( key ) );
+		else if ( isObject( value ) || isFunction( value ) ) {
+			children = objectKeys( value ).map( key => this.joinKey( key ) );
 		}
 
 		else if ( value != null ) {
@@ -103,9 +104,9 @@ export default class ModelBase {
 	getVirtual ( shouldCapture ) {
 		const value = this.get( shouldCapture, { virtual: false } );
 		if ( isObject( value ) ) {
-			const result = Array.isArray( value ) ? [] : {};
+			const result = isArray( value ) ? [] : {};
 
-			const keys = Object.keys( value );
+			const keys = objectKeys( value );
 			let i = keys.length;
 			while ( i-- ) {
 				const child = this.childByKey[ keys[i] ];
@@ -252,7 +253,7 @@ export default class ModelBase {
 
 // TODO: this may be better handled by overreiding `get` on models with a parent that isRoot
 export function maybeBind ( model, value, shouldBind ) {
-	if ( shouldBind && typeof value === 'function' && model.parent && model.parent.isRoot ) {
+	if ( shouldBind && isFunction( value ) && model.parent && model.parent.isRoot ) {
 		if ( !model.boundValue ) {
 			model.boundValue = bind( value._r_unbound || value, model.parent.ractive );
 		}

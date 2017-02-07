@@ -5,6 +5,7 @@ import Fragment from '../Fragment';
 import ConditionalAttribute from './element/ConditionalAttribute';
 import updateLiveQueries from './element/updateLiveQueries';
 import { removeFromArray, toArray } from '../../utils/array';
+import { objectDefineProperty } from '../../utils/object';
 import { escapeHtml, voidElementNames } from '../../utils/html';
 import { bind, destroyed, render, unbind, update } from '../../shared/methodCallers';
 import { createElement, detachNode, matches, safeAttributeString } from '../../utils/dom';
@@ -204,7 +205,7 @@ export default class Element extends ContainerItem {
 		}
 
 		// tie the node to this vdom element
-		Object.defineProperty( node, '_ractive', {
+		objectDefineProperty( node, '_ractive', {
 			value: {
 				proxy: this
 			}

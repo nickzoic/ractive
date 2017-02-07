@@ -4,6 +4,8 @@
 import { hasConsole } from '../config/environment';
 import Ractive from '../Ractive';
 import noop from './noop';
+import { isObjectType } from './is';
+import { lastItem } from './array';
 
 const alreadyWarned = {};
 let log, printWarning, welcome;
@@ -55,7 +57,7 @@ Found a bug? Raise an issue:
 		welcome();
 
 		// extract information about the instance this message pertains to, if applicable
-		if ( typeof args[ args.length - 1 ] === 'object' ) {
+		if ( isObjectType( lastItem( args ) ) ) {
 			const options = args.pop();
 			const ractive = options ? options.ractive : null;
 

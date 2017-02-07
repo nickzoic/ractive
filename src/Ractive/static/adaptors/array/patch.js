@@ -1,6 +1,7 @@
 import runloop from '../../../../global/runloop';
 import getNewIndices from '../../../../shared/getNewIndices';
 import processWrapper from './processWrapper';
+import { objectDefineProperty } from '../../../../utils/object';
 
 const mutatorMethods = [ 'pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift' ];
 const patchedArrayProto = [];
@@ -34,7 +35,7 @@ mutatorMethods.forEach( methodName => {
 		return result;
 	};
 
-	Object.defineProperty( patchedArrayProto, methodName, {
+	objectDefineProperty( patchedArrayProto, methodName, {
 		value: method,
 		configurable: true
 	});
@@ -57,7 +58,7 @@ else {
 		let i = mutatorMethods.length;
 		while ( i-- ) {
 			const methodName = mutatorMethods[i];
-			Object.defineProperty( array, methodName, {
+			objectDefineProperty( array, methodName, {
 				value: patchedArrayProto[ methodName ],
 				configurable: true
 			});

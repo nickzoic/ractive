@@ -2,6 +2,7 @@ import { fatal, warnIfDebug, welcome } from '../utils/log';
 import { missingPlugin } from '../config/errors';
 import { magic as magicSupported } from '../config/environment';
 import { ensureArray, combine } from '../utils/array';
+import { isString } from '../utils/is';
 import { findInViewHierarchy } from '../shared/registry';
 import arrayAdaptor from './static/adaptors/array/index';
 import magicAdaptor from './static/adaptors/magic';
@@ -107,7 +108,7 @@ function getAdaptors ( ractive, protoAdapt, options ) {
 
 
 	function lookup ( adaptor ) {
-		if ( typeof adaptor === 'string' ) {
+		if ( isString( adaptor ) ) {
 			adaptor = findInViewHierarchy( 'adaptors', ractive, adaptor );
 
 			if ( !adaptor ) {

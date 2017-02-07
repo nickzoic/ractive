@@ -7,10 +7,11 @@ import handlebarsBlockCodes from './handlebarsBlockCodes';
 import readExpression from '../readExpression';
 import refineExpression from '../../utils/refineExpression';
 import { readAlias, readAliases } from './readAliases';
+import { objectKeys } from '../../../utils/object';
 
 const indexRefPattern = /^\s*:\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
 const keyIndexRefPattern = /^\s*,\s*([a-zA-Z_$][a-zA-Z_$0-9]*)/;
-const handlebarsBlockPattern = new RegExp( '^(' + Object.keys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
+const handlebarsBlockPattern = new RegExp( '^(' + objectKeys( handlebarsBlockCodes ).join( '|' ) + ')\\b' );
 
 export default function readSection ( parser, tag ) {
 	let expression, section, child, children, hasElse, block, unlessBlock, closed, i, expectedClose;

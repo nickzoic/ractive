@@ -1,6 +1,8 @@
 import wrap from '../utils/wrapMethod';
 import registries from '../Ractive/config/registries';
 import Ractive from '../Ractive';
+import { isFunction } from '../utils/is';
+import { objectKeys } from '../utils/object';
 
 export default function unwrap ( Child ) {
 	const options = {};
@@ -29,7 +31,7 @@ function addRegistries ( Child, options ) {
 
 function addRegistry ( target, options, name ) {
 	let registry;
-	const keys = Object.keys( target[ name ] );
+	const keys = objectKeys( target[ name ] );
 
 	if ( !keys.length ) { return; }
 
@@ -43,7 +45,7 @@ function addRegistry ( target, options, name ) {
 }
 
 function addOtherOptions ( Child, options ) {
-	Object.keys( Child.prototype ).forEach( key => {
+	objectKeys( Child.prototype ).forEach( key => {
 		if ( key === 'computed' ) { return; }
 
 		let value = Child.prototype[ key ];
@@ -53,8 +55,8 @@ function addOtherOptions ( Child, options ) {
 		}
 
 		// is it a wrapped function?
-		else if ( typeof options[ key ] === 'function'
-				&& typeof value === 'function'
+		else if ( isFunction( options[ key ] )
+				&& isFunction( value )
 				&& options[ key ]._method ) {
 
 			const needsSuper = value._method;

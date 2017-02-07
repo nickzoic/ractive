@@ -2,9 +2,10 @@ const refPattern = /\[\s*(\*|[0-9]|[1-9][0-9]+)\s*\]/g;
 const splitPattern = /([^\\](?:\\\\)*)\./;
 const escapeKeyPattern = /\\|\./g;
 const unescapeKeyPattern = /((?:\\)+)\1|\\(\.)/g;
+import { isString } from '../utils/is';
 
 export function escapeKey ( key ) {
-	if ( typeof key === 'string' ) {
+	if ( isString( key ) ) {
 		return key.replace( escapeKeyPattern, '\\$&' );
 	}
 
@@ -33,7 +34,7 @@ export function splitKeypath ( keypath ) {
 }
 
 export function unescapeKey ( key ) {
-	if ( typeof key === 'string' ) {
+	if ( isString( key ) ) {
 		return key.replace( unescapeKeyPattern, '$1$2' );
 	}
 

@@ -2,6 +2,7 @@ import { missingPlugin } from '../../../../config/errors';
 import { isClient } from '../../../../config/environment';
 import { warnIfDebug, warnOnceIfDebug } from '../../../../utils/log';
 import { createElement } from '../../../../utils/dom';
+import { isFunction, isString } from '../../../../utils/is';
 import camelizeHyphenated from '../../../../utils/camelizeHyphenated.js';
 import interpolate from '../../../../shared/interpolate';
 import Ticker from '../../../../shared/Ticker';
@@ -187,14 +188,14 @@ if ( !isClient ) {
 				if ( propertiesToTransitionInJs.length ) {
 					let easing;
 
-					if ( typeof options.easing === 'string' ) {
+					if ( isString( options.easing ) ) {
 						easing = t.ractive.easing[ options.easing ];
 
 						if ( !easing ) {
 							warnOnceIfDebug( missingPlugin( options.easing, 'easing' ) );
 							easing = linear;
 						}
-					} else if ( typeof options.easing === 'function' ) {
+					} else if ( isFunction( options.easing ) ) {
 						easing = options.easing;
 					} else {
 						easing = linear;

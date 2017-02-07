@@ -1,6 +1,7 @@
 import { fromExpression, fromComputationString } from '../../parse/utils/createFunction';
 import { doc } from '../../config/environment';
 import { fatal } from '../../utils/log';
+import { isString } from '../../utils/is';
 import { addFunctions } from '../../shared/getFunction';
 import parse from '../../parse/_parse';
 
@@ -65,7 +66,7 @@ const parser = {
 	},
 
 	isParsed ( template) {
-		return !( typeof template === 'string' );
+		return !( isString( template ) );
 	},
 
 	getParseOptions ( ractive ) {
