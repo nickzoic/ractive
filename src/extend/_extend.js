@@ -3,8 +3,6 @@ import config from '../Ractive/config/config';
 import dataConfigurator from '../Ractive/config/custom/data';
 import construct from '../Ractive/construct';
 import initialise from '../Ractive/initialise';
-import Ractive from '../Ractive';
-import unwrapExtended from './unwrapExtended';
 
 const callsSuper = /super\s\(|\.call\s*\(\s*this/;
 
@@ -21,16 +19,6 @@ export function extendWith ( Class, options = {} ) {
 }
 
 function extendOne ( Parent, options = {}, Target ) {
-	// if we're extending with another Ractive instance...
-	//
-	//   var Human = Ractive.extend(...), Spider = Ractive.extend(...);
-	//   var Spiderman = Human.extend( Spider );
-	//
-	// ...inherit prototype methods and default options as well
-	if ( options.prototype instanceof Ractive ) {
-		options = unwrapExtended( options );
-	}
-
 	let proto;
 	let Child = typeof Target === 'function' && Target;
 
